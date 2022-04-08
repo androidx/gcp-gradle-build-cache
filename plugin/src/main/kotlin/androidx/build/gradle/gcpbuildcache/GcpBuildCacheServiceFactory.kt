@@ -8,6 +8,9 @@ class GcpBuildCacheServiceFactory : BuildCacheServiceFactory<GcpBuildCache> {
     buildCache: GcpBuildCache,
     describer: BuildCacheServiceFactory.Describer,
   ): BuildCacheService {
-    TODO("Not yet implemented")
+    describer
+      .type("GCP-backed")
+
+    return GcpBuildCacheService()
   }
 }
