@@ -3,3 +3,6 @@
 
 # Ignore Gradle build output directory
 build
+
+# Don't ignore src files under build package
+!**/src/**/build
