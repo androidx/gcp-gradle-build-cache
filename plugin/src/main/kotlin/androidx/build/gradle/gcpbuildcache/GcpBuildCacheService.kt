@@ -1,7 +1,6 @@
 package androidx.build.gradle.gcpbuildcache
 
 import com.google.cloud.storage.Bucket
-import java.io.ByteArrayOutputStream
 import org.gradle.caching.BuildCacheEntryReader
 import org.gradle.caching.BuildCacheEntryWriter
 import org.gradle.caching.BuildCacheKey
@@ -13,19 +12,16 @@ import org.gradle.caching.BuildCacheService
  */
 class GcpBuildCacheService(private val bucket: Bucket) : BuildCacheService {
   override fun close() {
-    TODO("Not yet implemented")
+    // Does nothing
   }
 
   override fun load(key: BuildCacheKey, reader: BuildCacheEntryReader): Boolean {
-    val blob = bucket.get(key.hashCode)
-    if (!blob.exists()) return false
-    reader.readFrom(blob.getContent().inputStream())
-    return true
+    val storage = GcpStorageService()
+    return storage.load(key, reader)
   }
 
   override fun store(key: BuildCacheKey, writer: BuildCacheEntryWriter) {
-    val outputStream = ByteArrayOutputStream()
-    writer.writeTo(outputStream)
-    bucket.create(key.hashCode, outputStream.toByteArray())
+    val storage = GcpStorageService()
+    storage.store(key, writer)
   }
 }
