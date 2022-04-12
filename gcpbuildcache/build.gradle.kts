@@ -1,5 +1,7 @@
 plugins {
-    `java-gradle-plugin`
+    id("java-gradle-plugin")
+    id("maven-publish")
+    id("com.gradle.plugin-publish") version "1.0.0-rc-1"
     id("org.jetbrains.kotlin.jvm") version "1.6.20"
 }
 
@@ -42,10 +44,27 @@ testing {
 }
 
 gradlePlugin {
-    // Define the plugin
-    val greeting by plugins.creating {
-        id = "androidx.build.gradle.gcpbuildcache.greeting"
-        implementationClass = "androidx.build.gradle.gcpbuildcache.GcpGradleBuildCachePlugin"
+    plugins {
+        create("gcpbuildcache") {
+            id = "androidx.build.gradle.gcpbuildcache"
+            displayName = "Gradle GCP Build Cache Plugin"
+            description = """
+                Implementation of Gradle Build Cache that allows to use Google Cloud Platform
+                storage buckets as a back end.
+            """.trimIndent()
+            implementationClass = "androidx.build.gradle.gcpbuildcache.GcpGradleBuildCachePlugin"
+        }
+    }
+}
+
+group = "androidx.build.gradle.gcpbuildcache"
+version = "1.0.0-alpha01"
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
     }
 }
 

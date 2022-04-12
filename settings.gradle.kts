@@ -9,4 +9,4 @@
  */
 
 rootProject.name = "gcp-gradle-build-cache"
-include("plugin")
+include("gcpbuildcache")
