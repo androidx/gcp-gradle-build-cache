@@ -15,6 +15,23 @@ dependencies {
     implementation("com.google.cloud:google-cloud-storage:2.6.0")
 }
 
+gradlePlugin {
+    plugins {
+        create("gcpbuildcache") {
+            id = "androidx.build.gradle.gcpbuildcache"
+            displayName = "Gradle GCP Build Cache Plugin"
+            description = """
+                Implementation of Gradle Build Cache that allows to use Google Cloud Platform
+                storage buckets as a back end.
+            """.trimIndent()
+            implementationClass = "androidx.build.gradle.gcpbuildcache.GcpGradleBuildCachePlugin"
+        }
+    }
+}
+
+group = "androidx.build.gradle.gcpbuildcache"
+version = "1.0.0-alpha01"
+
 testing {
     suites {
         // Configure the built-in test suite
@@ -39,31 +56,6 @@ testing {
                     testTask.configure { shouldRunAfter(test) } 
                 }
             }
-        }
-    }
-}
-
-gradlePlugin {
-    plugins {
-        create("gcpbuildcache") {
-            id = "androidx.build.gradle.gcpbuildcache"
-            displayName = "Gradle GCP Build Cache Plugin"
-            description = """
-                Implementation of Gradle Build Cache that allows to use Google Cloud Platform
-                storage buckets as a back end.
-            """.trimIndent()
-            implementationClass = "androidx.build.gradle.gcpbuildcache.GcpGradleBuildCachePlugin"
-        }
-    }
-}
-
-group = "androidx.build.gradle.gcpbuildcache"
-version = "1.0.0-alpha01"
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
         }
     }
 }
