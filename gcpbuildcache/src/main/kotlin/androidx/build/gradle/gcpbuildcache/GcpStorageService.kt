@@ -14,9 +14,13 @@ import java.nio.channels.Channels
 /**
  * An implementation of the [StorageService] that is backed by Google Cloud Storage.
  */
-class GcpStorageService(override val projectId: String, override val bucketName: String) : StorageService {
+class GcpStorageService(
+    override val projectId: String,
+    override val bucketName: String,
+    override val isPush: Boolean
+) : StorageService {
 
-    private val storageOptions by lazy { storageOptions(projectId) }
+    private val storageOptions by lazy { storageOptions(projectId, isPush) }
 
     override fun load(cacheKey: String): InputStream? {
         val blobId = BlobId.of(bucketName, cacheKey)
@@ -25,11 +29,17 @@ class GcpStorageService(override val projectId: String, override val bucketName:
     }
 
     override fun store(cacheKey: String, contents: ByteArray): Boolean {
+        if (!isPush) {
+            return false
+        }
         val blobId = BlobId.of(bucketName, cacheKey)
         return store(storageOptions, blobId, contents)
     }
 
     override fun delete(cacheKey: String): Boolean {
+        if (!isPush) {
+            return false
+        }
         val blobId = BlobId.of(bucketName, cacheKey)
         return Companion.delete(storageOptions, blobId)
     }
@@ -40,7 +50,7 @@ class GcpStorageService(override val projectId: String, override val bucketName:
 
     companion object {
         // The path to the service account credentials
-        private const val ANDROIDX_GRADLE_SERVICE_ACCOUNT_PATH = "ANDROIDX_GRADLE_SERVICE_ACCOUNT_PATH"
+        private const val GRADLE_CACHE_SERVICE_ACCOUNT_PATH = "GRADLE_CACHE_SERVICE_ACCOUNT_PATH"
 
         // The OAuth scopes for reading and writing to buckets.
         // https://cloud.google.com/storage/docs/authentication
@@ -52,15 +62,13 @@ class GcpStorageService(override val projectId: String, override val bucketName:
 
         private fun load(storage: StorageOptions?, blobId: BlobId): ReadChannel? {
             if (storage == null) return null
-            var blob = storage.service.get(blobId) ?: return null
-            val blobInfo = blob.toBuilder().setCustomTime(System.currentTimeMillis()).build()
-            blob = blobInfo.update()
+            val blob = storage.service.get(blobId) ?: return null
             return blob.reader()
         }
 
         private fun store(storage: StorageOptions?, blobId: BlobId, contents: ByteArray): Boolean {
             if (storage == null) return false
-            val blobInfo = BlobInfo.newBuilder(blobId).setCustomTime(System.currentTimeMillis()).build()
+            val blobInfo = BlobInfo.newBuilder(blobId).build()
             storage.service.createFrom(blobInfo, contents.inputStream())
             return true
         }
@@ -71,9 +79,10 @@ class GcpStorageService(override val projectId: String, override val bucketName:
         }
 
         private fun storageOptions(
-            projectId: String
+            projectId: String,
+            isPushSupported: Boolean
         ): StorageOptions? {
-            val credentials = credentials() ?: return null
+            val credentials = credentials(isPushSupported) ?: return null
             val retrySettings = RetrySettings.newBuilder()
             retrySettings.maxAttempts = 3
             retrySettings.retryDelayMultiplier = 2.0
@@ -82,13 +91,14 @@ class GcpStorageService(override val projectId: String, override val bucketName:
                 .setRetrySettings(retrySettings.build()).build()
         }
 
-        private fun credentials(writer: Boolean = false): GoogleCredentials? {
+        private fun credentials(isPushSupported: Boolean): GoogleCredentials? {
             val path = serviceAccountPath() ?: return null
-            val scopes = listOf(
+            val scopes = mutableListOf(
                 STORAGE_READ_ONLY,
-                STORAGE_READ_WRITE,
-                STORAGE_FULL_CONTROL
             )
+            if (isPushSupported) {
+                scopes += listOf(STORAGE_READ_WRITE, STORAGE_FULL_CONTROL)
+            }
             return GoogleCredentials.fromStream(path.inputStream()).createScoped(scopes)
         }
 
@@ -96,7 +106,7 @@ class GcpStorageService(override val projectId: String, override val bucketName:
          * @return The [File] path to the service account keys.
          */
         private fun serviceAccountPath(): File? {
-            val path = System.getenv()[ANDROIDX_GRADLE_SERVICE_ACCOUNT_PATH]
+            val path = System.getenv()[GRADLE_CACHE_SERVICE_ACCOUNT_PATH]
             if (path != null) {
                 val file = File(path)
                 if (file.isFile && file.exists()) {

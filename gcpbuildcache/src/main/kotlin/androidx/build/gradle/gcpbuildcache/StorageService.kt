@@ -15,6 +15,11 @@ interface StorageService : Closeable {
     val bucketName: String
 
     /**
+     * `true` if the underlying storage service supports writes and deletes.
+     */
+    val isPush: Boolean
+
+    /**
      * Loads an entity from Storage.
      * @param cacheKey is the unique key that can identify a resource that needs to be loaded.
      * @return an [InputStream] if there is a storage-hit. `null` if it's a storage-miss.

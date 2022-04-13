@@ -12,7 +12,8 @@ class GcpBuildCacheServiceFactory : BuildCacheServiceFactory<GcpBuildCache> {
             .type("GCP-backed")
             .config("projectId", buildCache.projectId)
             .config("bucketName", buildCache.bucketName)
+            .config("isPushSupported", "${buildCache.isPush}")
 
-        return GcpBuildCacheService(buildCache.projectId, buildCache.bucketName)
+        return GcpBuildCacheService(buildCache.projectId, buildCache.bucketName, buildCache.isPush)
     }
 }
