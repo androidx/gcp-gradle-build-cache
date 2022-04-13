@@ -4,6 +4,10 @@
       <verify-metadata>true</verify-metadata>
       <verify-signatures>true</verify-signatures>
       <key-servers enabled="false"/>
+      <trusted-artifacts>
+         <trust group="gradle" name="gradle"/>
+         <trust group="org.codehaus.groovy" />
+      </trusted-artifacts>
       <trusted-keys>
          <trusted-key id="19beab2d799c020f17c69126b16698a4adf4d638" group="org.checkerframework"/>
          <trusted-key id="1fa37fbe4453c1073e7ef61d6449005f96bc97a3" group="de.undercouch"/>

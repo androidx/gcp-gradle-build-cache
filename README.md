@@ -24,7 +24,7 @@ buildCache {
 `projectId` and `bucketName` are required. `isEnabled` defaults to`true` and
 `isPush` default to `false`.
 
-Then also set `ANDROIDX_GRADLE_SERVICE_ACCOUNT_PATH` environment variable that
+Then also set `GRADLE_CACHE_SERVICE_ACCOUNT_PATH` environment variable that
 points to a file containing service account credentials in a json format.
 
 ## Development
@@ -33,5 +33,5 @@ Set up the following environment variables for service account credentials.
 
 ```bash
 # Gradle Cache Service Account Path
-export ANDROIDX_GRADLE_SERVICE_ACCOUNT_PATH=$HOME/.gradle-cache/androidx-dev-prod-build-cache-writer.json
+export GRADLE_CACHE_SERVICE_ACCOUNT_PATH=$HOME/.gradle-cache/androidx-dev-prod-build-cache-writer.json
 ```

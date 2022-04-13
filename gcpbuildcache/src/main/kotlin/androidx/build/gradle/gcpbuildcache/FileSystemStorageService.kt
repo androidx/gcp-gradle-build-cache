@@ -7,7 +7,11 @@ import java.nio.file.Files
 /**
  * An implementation of the [StorageService] that is backed by a file system.
  */
-class FileSystemStorageService(override val projectId: String, override val bucketName: String) : StorageService {
+class FileSystemStorageService(
+    override val projectId: String,
+    override val bucketName: String,
+    override val isPush: Boolean
+) : StorageService {
 
     private val location = Files.createTempDirectory("tmp$projectId$bucketName").toFile()
 
@@ -21,6 +25,10 @@ class FileSystemStorageService(override val projectId: String, override val buck
     }
 
     override fun store(cacheKey: String, contents: ByteArray): Boolean {
+        if (!isPush) {
+            return false
+        }
+
         val file = File(location, cacheKey)
         val output = file.outputStream()
         output.use {
@@ -30,6 +38,10 @@ class FileSystemStorageService(override val projectId: String, override val buck
     }
 
     override fun delete(cacheKey: String): Boolean {
+        if (!isPush) {
+            return false
+        }
+
         val file = File(location, cacheKey)
         return file.delete()
     }
@@ -52,4 +64,5 @@ class FileSystemStorageService(override val projectId: String, override val buck
             delete()
         }
     }
+
 }

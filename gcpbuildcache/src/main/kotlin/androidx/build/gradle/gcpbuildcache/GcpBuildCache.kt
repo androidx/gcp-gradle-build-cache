@@ -8,14 +8,14 @@ import org.gradle.caching.configuration.AbstractBuildCache
  */
 open class GcpBuildCache(
 ) : AbstractBuildCache() {
-  /**
-   * The Google Cloud Platform project id, that can be used for billing.
-   */
-  lateinit var projectId: String
+    /**
+     * The Google Cloud Platform project id, that can be used for billing.
+     */
+    lateinit var projectId: String
 
-  /**
-   * The name of the bucket that is used to store all the gradle cache entries.
-   * This essentially becomes the root of all cache entries.
-   */
-  lateinit var bucketName: String
+    /**
+     * The name of the bucket that is used to store all the gradle cache entries.
+     * This essentially becomes the root of all cache entries.
+     */
+    lateinit var bucketName: String
 }

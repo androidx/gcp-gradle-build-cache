@@ -17,14 +17,15 @@ import java.io.ByteArrayOutputStream
 class GcpBuildCacheService(
     private val projectId: String,
     private val bucketName: String,
-    private val inTestMode: Boolean = false
+    private val isPush: Boolean,
+    inTestMode: Boolean = false
 ) : BuildCacheService {
 
     private val storageService = if (inTestMode) {
         // Use an implementation backed by the File System when in test mode.
-        FileSystemStorageService(projectId, bucketName)
+        FileSystemStorageService(projectId, bucketName, isPush)
     } else {
-        GcpStorageService(projectId, bucketName)
+        GcpStorageService(projectId, bucketName, isPush)
     }
 
     override fun close() {
