@@ -27,12 +27,17 @@ import java.nio.file.Files
 internal class FileSystemStorageService(
     override val projectId: String,
     override val bucketName: String,
-    override val isPush: Boolean
+    override val isPush: Boolean,
+    override val isEnabled: Boolean
 ) : StorageService {
 
     private val location = Files.createTempDirectory("tmp$projectId$bucketName").toFile()
 
     override fun load(cacheKey: String): InputStream? {
+        if (!isEnabled) {
+            return null
+        }
+
         val file = File(location, cacheKey)
         return if (file.exists() && file.isFile) {
             file.inputStream()
@@ -42,6 +47,10 @@ internal class FileSystemStorageService(
     }
 
     override fun store(cacheKey: String, contents: ByteArray): Boolean {
+        if (!isEnabled) {
+            return false
+        }
+
         if (!isPush) {
             return false
         }
@@ -55,6 +64,10 @@ internal class FileSystemStorageService(
     }
 
     override fun delete(cacheKey: String): Boolean {
+        if (!isEnabled) {
+            return false
+        }
+
         if (!isPush) {
             return false
         }
