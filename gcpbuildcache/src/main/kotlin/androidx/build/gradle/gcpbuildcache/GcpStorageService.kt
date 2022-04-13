@@ -34,18 +34,27 @@ import java.nio.channels.Channels
 internal class GcpStorageService(
     override val projectId: String,
     override val bucketName: String,
-    override val isPush: Boolean
+    override val isPush: Boolean,
+    override val isEnabled: Boolean
 ) : StorageService {
 
     private val storageOptions by lazy { storageOptions(projectId, isPush) }
 
     override fun load(cacheKey: String): InputStream? {
+        if (!isEnabled) {
+            return null
+        }
+
         val blobId = BlobId.of(bucketName, cacheKey)
         val readChannel = load(storageOptions, blobId) ?: return null
         return Channels.newInputStream(readChannel)
     }
 
     override fun store(cacheKey: String, contents: ByteArray): Boolean {
+        if (!isEnabled) {
+            return false
+        }
+
         if (!isPush) {
             return false
         }
@@ -54,6 +63,10 @@ internal class GcpStorageService(
     }
 
     override fun delete(cacheKey: String): Boolean {
+        if (!isEnabled) {
+            return false
+        }
+
         if (!isPush) {
             return false
         }

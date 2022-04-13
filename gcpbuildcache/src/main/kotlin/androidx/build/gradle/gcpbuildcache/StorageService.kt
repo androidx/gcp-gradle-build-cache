@@ -37,6 +37,11 @@ interface StorageService : Closeable {
     val isPush: Boolean
 
     /**
+     * If `true`, use the underlying storage service.
+     */
+    val isEnabled: Boolean
+
+    /**
      * Loads an entity from Storage.
      * @param cacheKey is the unique key that can identify a resource that needs to be loaded.
      * @return an [InputStream] if there is a storage-hit. `null` if it's a storage-miss.

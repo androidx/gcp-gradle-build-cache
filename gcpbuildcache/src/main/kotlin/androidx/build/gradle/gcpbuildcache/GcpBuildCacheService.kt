@@ -35,14 +35,15 @@ internal class GcpBuildCacheService(
     private val projectId: String,
     private val bucketName: String,
     private val isPush: Boolean,
+    private val isEnabled: Boolean,
     inTestMode: Boolean = false
 ) : BuildCacheService {
 
     private val storageService = if (inTestMode) {
         // Use an implementation backed by the File System when in test mode.
-        FileSystemStorageService(projectId, bucketName, isPush)
+        FileSystemStorageService(projectId, bucketName, isPush, isEnabled)
     } else {
-        GcpStorageService(projectId, bucketName, isPush)
+        GcpStorageService(projectId, bucketName, isPush, isEnabled)
     }
 
     override fun close() {

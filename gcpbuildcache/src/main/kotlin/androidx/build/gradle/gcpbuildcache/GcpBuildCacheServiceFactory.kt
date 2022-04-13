@@ -30,7 +30,13 @@ internal class GcpBuildCacheServiceFactory : BuildCacheServiceFactory<GcpBuildCa
             .config("projectId", buildCache.projectId)
             .config("bucketName", buildCache.bucketName)
             .config("isPushSupported", "${buildCache.isPush}")
+            .config("isEnabled", "${buildCache.isEnabled}")
 
-        return GcpBuildCacheService(buildCache.projectId, buildCache.bucketName, buildCache.isPush)
+        return GcpBuildCacheService(
+            buildCache.projectId,
+            buildCache.bucketName,
+            buildCache.isPush,
+            buildCache.isEnabled
+        )
     }
 }
