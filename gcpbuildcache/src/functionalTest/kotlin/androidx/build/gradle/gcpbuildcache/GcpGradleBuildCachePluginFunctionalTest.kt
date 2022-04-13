@@ -35,7 +35,8 @@ class GcpGradleBuildCachePluginFunctionalTest {
     private fun getBuildFile() = getProjectDir().resolve("build.gradle.kts")
     private fun getSettingsFile() = getProjectDir().resolve("settings.gradle.kts")
 
-    @Test fun `can run tasks task`() {
+    @Test
+    fun `can run tasks task`() {
         // Setup the test build
         getSettingsFile().writeText("""
             plugins {
@@ -56,6 +57,6 @@ class GcpGradleBuildCachePluginFunctionalTest {
         runner.withPluginClasspath()
         runner.withArguments("tasks")
         runner.withProjectDir(getProjectDir())
-        val result = runner.build();
+        runner.build();
     }
 }
