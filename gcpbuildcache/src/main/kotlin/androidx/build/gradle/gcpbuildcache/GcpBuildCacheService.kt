@@ -31,7 +31,7 @@ import java.io.ByteArrayOutputStream
  * @param bucketName The name of the bucket that is used to store all the gradle cache entries.
  * This essentially becomes the root of all cache entries.
  */
-class GcpBuildCacheService(
+internal class GcpBuildCacheService(
     private val projectId: String,
     private val bucketName: String,
     private val isPush: Boolean,

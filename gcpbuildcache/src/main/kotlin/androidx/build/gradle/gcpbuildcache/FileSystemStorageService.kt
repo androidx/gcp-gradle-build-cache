@@ -24,7 +24,7 @@ import java.nio.file.Files
 /**
  * An implementation of the [StorageService] that is backed by a file system.
  */
-class FileSystemStorageService(
+internal class FileSystemStorageService(
     override val projectId: String,
     override val bucketName: String,
     override val isPush: Boolean

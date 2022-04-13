@@ -31,7 +31,7 @@ import java.nio.channels.Channels
 /**
  * An implementation of the [StorageService] that is backed by Google Cloud Storage.
  */
-class GcpStorageService(
+internal class GcpStorageService(
     override val projectId: String,
     override val bucketName: String,
     override val isPush: Boolean
