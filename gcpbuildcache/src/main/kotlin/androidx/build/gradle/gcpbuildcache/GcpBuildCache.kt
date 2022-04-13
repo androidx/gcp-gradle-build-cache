@@ -10,4 +10,8 @@ import org.gradle.caching.configuration.AbstractBuildCache
  * @param bucketName The name of the bucket that is used to store all the gradle cache entries.
  * This essentially becomes the root of all cache entries.
  */
-class GcpBuildCache(val projectId: String, val bucketName: String) : AbstractBuildCache()
+open class GcpBuildCache(
+) : AbstractBuildCache() {
+  lateinit var projectId: String
+  lateinit var bucketName: String
+}
