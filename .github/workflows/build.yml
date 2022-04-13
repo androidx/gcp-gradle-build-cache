@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: set up JDK 11
+    - name: set up JDK
       uses: actions/setup-java@v3
       with:
         distribution: zulu
@@ -21,4 +21,4 @@ jobs:
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2
     - name: Execute Gradle build
-      run: ./gradlew jar
+      run: ./gradlew jar test
