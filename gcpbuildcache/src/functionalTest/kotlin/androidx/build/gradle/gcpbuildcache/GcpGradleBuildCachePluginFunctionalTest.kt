@@ -21,18 +21,17 @@ class GcpGradleBuildCachePluginFunctionalTest {
     @Test fun `can run tasks task`() {
         // Setup the test build
         getSettingsFile().writeText("""
-plugins {
-    id("androidx.build.gradle.gcpbuildcache")
-}
-buildCache {
-    remote(androidx.build.gradle.gcpbuildcache.GcpBuildCache::class.java) {
-        projectId = "foo"
-        bucketName = "bar"
-    }
-}
+            plugins {
+                id("androidx.build.gradle.gcpbuildcache")
+            }
+            buildCache {
+                remote(androidx.build.gradle.gcpbuildcache.GcpBuildCache::class) {
+                    projectId = "foo"
+                    bucketName = "bar"
+                }
+            }
         """.trimIndent())
-        getBuildFile().writeText("""
-""")
+        getBuildFile().writeText("")
 
         // Run the build
         val runner = GradleRunner.create()
