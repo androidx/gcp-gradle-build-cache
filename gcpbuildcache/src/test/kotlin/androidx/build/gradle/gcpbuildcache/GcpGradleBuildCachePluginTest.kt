@@ -11,7 +11,8 @@ import kotlin.test.assertNotNull
  * A simple unit test for the 'androidx.build.gradle.gcpbuildcache.greeting' plugin.
  */
 class GcpGradleBuildCachePluginTest {
-    @Test fun `plugin registers task`() {
+    @Test
+    fun `plugin registers task`() {
         // Create a test project and apply the plugin
         val project = ProjectBuilder.builder().build()
         project.plugins.apply("androidx.build.gradle.gcpbuildcache.greeting")
