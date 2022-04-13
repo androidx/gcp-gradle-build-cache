@@ -3,42 +3,43 @@
  */
 package androidx.build.gradle.gcpbuildcache
 
-import java.io.File
-import java.nio.file.Files
-import kotlin.test.assertTrue
 import kotlin.test.Test
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 
 /**
- * A simple functional test for the 'androidx.build.gradle.gcpbuildcache.greeting' plugin.
+ * A simple functional test for the 'androidx.build.gradle.gcpbuildcache.GcpBuildCache' plugin.
  */
 class GcpGradleBuildCachePluginFunctionalTest {
     @get:Rule val tempFolder = TemporaryFolder()
 
     private fun getProjectDir() = tempFolder.root
-    private fun getBuildFile() = getProjectDir().resolve("build.gradle")
-    private fun getSettingsFile() = getProjectDir().resolve("settings.gradle")
+    private fun getBuildFile() = getProjectDir().resolve("build.gradle.kts")
+    private fun getSettingsFile() = getProjectDir().resolve("settings.gradle.kts")
 
-    @Test fun `can run task`() {
+    @Test fun `can run tasks task`() {
         // Setup the test build
-        getSettingsFile().writeText("")
-        getBuildFile().writeText("""
+        getSettingsFile().writeText("""
 plugins {
-    id('androidx.build.gradle.gcpbuildcache.greeting')
+    id("androidx.build.gradle.gcpbuildcache")
 }
+buildCache {
+    remote(androidx.build.gradle.gcpbuildcache.GcpBuildCache::class.java) {
+        projectId = "foo"
+        bucketName = "bar"
+    }
+}
+        """.trimIndent())
+        getBuildFile().writeText("""
 """)
 
         // Run the build
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("greeting")
+        runner.withArguments("tasks")
         runner.withProjectDir(getProjectDir())
         val result = runner.build();
-
-        // Verify the result
-        assertTrue(result.output.contains("Hello from plugin 'androidx.build.gradle.gcpbuildcache.greeting'"))
     }
 }

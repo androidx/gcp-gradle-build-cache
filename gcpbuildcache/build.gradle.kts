@@ -15,6 +15,11 @@ dependencies {
     implementation("com.google.cloud:google-cloud-storage:2.6.0")
 }
 
+pluginBundle {
+    vcsUrl = "https://github.com/androidx/gcp-gradle-build-cache"
+    tags = listOf("buildcache", "gcp", "caching")
+}
+
 gradlePlugin {
     plugins {
         create("gcpbuildcache") {
