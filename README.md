@@ -21,8 +21,8 @@ buildCache {
 }
 ```
 
-`projectId` and `bucketName` are required. `isPush` and `isEnabled` defaults to
-`true`.
+`projectId` and `bucketName` are required. `isEnabled` defaults to`true` and
+`isPush` default to `false`.
 
 Then also set `ANDROIDX_GRADLE_SERVICE_ACCOUNT_PATH` environment variable that
 points to a file containing service account credentials in a json format.
