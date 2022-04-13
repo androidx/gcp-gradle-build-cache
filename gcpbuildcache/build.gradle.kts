@@ -41,13 +41,13 @@ testing {
     suites {
         // Configure the built-in test suite
         val test by getting(JvmTestSuite::class) {
-            // Use Kotlin Test test framework
+            // Use Kotlin Test Framework
             useKotlinTest()
         }
 
         // Create a new test suite
         val functionalTest by registering(JvmTestSuite::class) {
-            // Use Kotlin Test test framework
+            // Use Kotlin Test Framework
             useKotlinTest()
 
             dependencies {
