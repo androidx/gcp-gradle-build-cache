@@ -17,13 +17,14 @@
 
 package androidx.build.gradle.gcpbuildcache
 
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.caching.configuration.AbstractBuildCache
 
 /**
  * Gradle Build Cache that uses GCP buckets as a backing for load and store
  * Gradle results.
  */
-open class GcpBuildCache(
+abstract class GcpBuildCache(
 ) : AbstractBuildCache() {
     /**
      * The Google Cloud Platform project id, that can be used for billing.
@@ -35,4 +36,9 @@ open class GcpBuildCache(
      * This essentially becomes the root of all cache entries.
      */
     lateinit var bucketName: String
+
+    /**
+     * Path to the credentials of the service account.
+     */
+    abstract val serviceAccountPath: RegularFileProperty
 }

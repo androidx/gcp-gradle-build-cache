@@ -35,6 +35,7 @@ internal class GcpBuildCacheServiceFactory : BuildCacheServiceFactory<GcpBuildCa
         return GcpBuildCacheService(
             buildCache.projectId,
             buildCache.bucketName,
+            buildCache.serviceAccountPath,
             buildCache.isPush,
             buildCache.isEnabled
         )

@@ -12,17 +12,17 @@ plugins {
 }
 
 buildCache {
-  remote(androidx.build.gradle.gcpbuildcache.GcpBuildCache::class) {
-    projectId = "foo"
-    bucketName = "bar"
-    isPush = true
-    isEnabled = true
+    remote(androidx.build.gradle.gcpbuildcache.GcpBuildCache::class) {
+        projectId = "foo"
+        bucketName = "bar"
+        serviceAccountPath.set(File("path/to/credentials.json"))
+        isPush = inCi
   }
 }
 ```
 
-`projectId` and `bucketName` are required. `isEnabled` defaults to`true` and
-`isPush` default to `false`.
+- `projectId`, `bucketName`, and `serviceAccountPath` are required
+- `isPush` defaults to `false`.
 
 Then also set `GRADLE_CACHE_SERVICE_ACCOUNT_PATH` environment variable that
 points to a file containing service account credentials in a json format.

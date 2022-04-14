@@ -24,7 +24,8 @@ import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.StorageOptions
 import com.google.cloud.storage.StorageRetryStrategy
-import java.io.File
+import org.gradle.api.GradleException
+import org.gradle.api.file.RegularFileProperty
 import java.io.InputStream
 import java.nio.channels.Channels
 
@@ -34,11 +35,12 @@ import java.nio.channels.Channels
 internal class GcpStorageService(
     override val projectId: String,
     override val bucketName: String,
+    private val serviceAccountPath: RegularFileProperty,
     override val isPush: Boolean,
-    override val isEnabled: Boolean
+    override val isEnabled: Boolean,
 ) : StorageService {
 
-    private val storageOptions by lazy { storageOptions(projectId, isPush) }
+    private val storageOptions by lazy { storageOptions(projectId, serviceAccountPath, isPush) }
 
     override fun load(cacheKey: String): InputStream? {
         if (!isEnabled) {
@@ -79,9 +81,6 @@ internal class GcpStorageService(
     }
 
     companion object {
-        // The path to the service account credentials
-        private const val GRADLE_CACHE_SERVICE_ACCOUNT_PATH = "GRADLE_CACHE_SERVICE_ACCOUNT_PATH"
-
         // The OAuth scopes for reading and writing to buckets.
         // https://cloud.google.com/storage/docs/authentication
         private const val STORAGE_READ_ONLY = "https://www.googleapis.com/auth/devstorage.read_only"
@@ -110,9 +109,10 @@ internal class GcpStorageService(
 
         private fun storageOptions(
             projectId: String,
+            serviceAccountPath: RegularFileProperty,
             isPushSupported: Boolean
         ): StorageOptions? {
-            val credentials = credentials(isPushSupported) ?: return null
+            val credentials = credentials(serviceAccountPath, isPushSupported) ?: return null
             val retrySettings = RetrySettings.newBuilder()
             retrySettings.maxAttempts = 3
             retrySettings.retryDelayMultiplier = 2.0
@@ -121,8 +121,14 @@ internal class GcpStorageService(
                 .setRetrySettings(retrySettings.build()).build()
         }
 
-        private fun credentials(isPushSupported: Boolean): GoogleCredentials? {
-            val path = serviceAccountPath() ?: return null
+        private fun credentials(
+            serviceAccountPath: RegularFileProperty,
+            isPushSupported: Boolean
+        ): GoogleCredentials? {
+            if (!serviceAccountPath.isPresent) return null
+            val path = serviceAccountPath.asFile.get()
+            if (!path.exists()) throw GradleException("Your specified $path does not exist")
+            if (!path.isFile) throw GradleException("Your specified $path is not a file")
             val scopes = mutableListOf(
                 STORAGE_READ_ONLY,
             )
@@ -130,20 +136,6 @@ internal class GcpStorageService(
                 scopes += listOf(STORAGE_READ_WRITE, STORAGE_FULL_CONTROL)
             }
             return GoogleCredentials.fromStream(path.inputStream()).createScoped(scopes)
-        }
-
-        /**
-         * @return The [File] path to the service account keys.
-         */
-        private fun serviceAccountPath(): File? {
-            val path = System.getenv()[GRADLE_CACHE_SERVICE_ACCOUNT_PATH]
-            if (path != null) {
-                val file = File(path)
-                if (file.isFile && file.exists()) {
-                    return file
-                }
-            }
-            return null
         }
     }
 }

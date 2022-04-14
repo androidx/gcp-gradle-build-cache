@@ -17,6 +17,7 @@
 
 package androidx.build.gradle.gcpbuildcache
 
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.caching.BuildCacheEntryReader
 import org.gradle.caching.BuildCacheEntryWriter
 import org.gradle.caching.BuildCacheKey
@@ -34,8 +35,9 @@ import java.io.ByteArrayOutputStream
 internal class GcpBuildCacheService(
     private val projectId: String,
     private val bucketName: String,
-    private val isPush: Boolean,
-    private val isEnabled: Boolean,
+    serviceAccountPath: RegularFileProperty,
+    isPush: Boolean,
+    isEnabled: Boolean,
     inTestMode: Boolean = false
 ) : BuildCacheService {
 
@@ -43,7 +45,7 @@ internal class GcpBuildCacheService(
         // Use an implementation backed by the File System when in test mode.
         FileSystemStorageService(projectId, bucketName, isPush, isEnabled)
     } else {
-        GcpStorageService(projectId, bucketName, isPush, isEnabled)
+        GcpStorageService(projectId, bucketName, serviceAccountPath, isPush, isEnabled)
     }
 
     override fun close() {
