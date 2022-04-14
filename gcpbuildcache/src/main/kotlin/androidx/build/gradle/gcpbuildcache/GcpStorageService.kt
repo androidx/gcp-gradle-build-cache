@@ -136,8 +136,8 @@ internal class GcpStorageService(
                 }
                 is ExportedKeyGcpCredentials -> {
                     val path = gcpCredentials.pathToCredentials
-                    if (!path.exists()) throw GradleException("Your specified $path does not exist")
-                    if (!path.isFile) throw GradleException("Your specified $path is not a file")
+                    if (!path.exists()) throw GradleException("Credentials path $path does not exist")
+                    if (!path.isFile) throw GradleException("Credentials path $path is not a file")
 
                     GoogleCredentials.fromStream(path.inputStream()).createScoped(scopes)
                 }
