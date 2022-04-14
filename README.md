@@ -24,12 +24,9 @@ buildCache {
 - `projectId`, `bucketName`, and `serviceAccountPath` are required
 - `isPush` defaults to `false`.
 
-Then also set `GRADLE_CACHE_SERVICE_ACCOUNT_PATH` environment variable that
-points to a file containing service account credentials in a json format.
-
 ## Development
 
-Set up the following environment variables for service account credentials.
+Set up the following environment variables for service account credentials to run all the test.
 
 ```bash
 # Gradle Cache Service Account Path
