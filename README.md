@@ -15,7 +15,7 @@ buildCache {
     remote(androidx.build.gradle.gcpbuildcache.GcpBuildCache::class) {
         projectId = "foo"
         bucketName = "bar"
-        serviceAccountPath.set(File("path/to/credentials.json"))
+        serviceAccountPath = File("path/to/credentials.json")
         isPush = inCi
   }
 }

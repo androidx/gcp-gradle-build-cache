@@ -25,7 +25,7 @@ import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.StorageOptions
 import com.google.cloud.storage.StorageRetryStrategy
 import org.gradle.api.GradleException
-import org.gradle.api.file.RegularFileProperty
+import java.io.File
 import java.io.InputStream
 import java.nio.channels.Channels
 
@@ -35,7 +35,7 @@ import java.nio.channels.Channels
 internal class GcpStorageService(
     override val projectId: String,
     override val bucketName: String,
-    private val serviceAccountPath: RegularFileProperty,
+    private val serviceAccountPath: File,
     override val isPush: Boolean,
     override val isEnabled: Boolean,
 ) : StorageService {
@@ -109,7 +109,7 @@ internal class GcpStorageService(
 
         private fun storageOptions(
             projectId: String,
-            serviceAccountPath: RegularFileProperty,
+            serviceAccountPath: File,
             isPushSupported: Boolean
         ): StorageOptions? {
             val credentials = credentials(serviceAccountPath, isPushSupported) ?: return null
@@ -122,11 +122,9 @@ internal class GcpStorageService(
         }
 
         private fun credentials(
-            serviceAccountPath: RegularFileProperty,
+            path: File,
             isPushSupported: Boolean
         ): GoogleCredentials? {
-            if (!serviceAccountPath.isPresent) return null
-            val path = serviceAccountPath.asFile.get()
             if (!path.exists()) throw GradleException("Your specified $path does not exist")
             if (!path.isFile) throw GradleException("Your specified $path is not a file")
             val scopes = mutableListOf(

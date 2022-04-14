@@ -31,7 +31,7 @@ import java.util.function.BiFunction
  */
 class GcpStorageServiceTest {
     private val serviceAccountPath = System.getenv()["GRADLE_CACHE_SERVICE_ACCOUNT_PATH"]
-    private val serviceAccountPathProperty: RegularFileProperty = FakeRegularFileProperty(serviceAccountPath)
+    private val serviceAccountPathProperty: File = File(serviceAccountPath)
 
     @Test
     fun testStoreBlob() {
@@ -147,63 +147,4 @@ class GcpStorageServiceTest {
         // The Bucket Name
         private const val BUCKET_NAME = "androidx-gradle-build-cache-test"
     }
-}
-
-private class FakeRegularFileProperty(private val path: String?): RegularFileProperty {
-    override fun isPresent(): Boolean = path != null
-    override fun getAsFile(): Provider<File> = object : Provider<File> {
-        override fun get(): File = File(path!!)
-
-        // The rest is not implemented as it is not used
-        override fun getOrNull(): File? = TODO("Not yet implemented")
-        override fun getOrElse(defaultValue: File): File = TODO("Not yet implemented")
-        override fun <S : Any?> map(transformer: Transformer<out S, in File>): Provider<S> {
-            TODO("Not yet implemented")
-        }
-        override fun <S : Any?> flatMap(transformer: Transformer<out Provider<out S>, in File>): Provider<S> {
-            TODO("Not yet implemented")
-        }
-        override fun isPresent(): Boolean = TODO("Not yet implemented")
-        override fun orElse(value: File): Provider<File> = TODO("Not yet implemented")
-        override fun orElse(p0: Provider<out File>): Provider<File> = TODO("Not yet implemented")
-        @Suppress("OVERRIDE_DEPRECATION")
-        override fun forUseAtConfigurationTime(): Provider<File> = TODO("Not yet implemented")
-        override fun <B : Any?, R : Any?> zip(p0: Provider<B>, p1: BiFunction<File, B, R>): Provider<R> {
-            TODO("Not yet implemented")
-        }
-    }
-
-    // The rest is not implemented as it is not used
-    override fun get(): RegularFile = TODO("Not yet implemented")
-    override fun getOrNull(): RegularFile? = TODO("Not yet implemented")
-    override fun getOrElse(defaultValue: RegularFile): RegularFile = TODO("Not yet implemented")
-    override fun <S : Any?> map(transformer: Transformer<out S, in RegularFile>): Provider<S> {
-        TODO("Not yet implemented")
-    }
-    override fun <S : Any?> flatMap(transformer: Transformer<out Provider<out S>, in RegularFile>): Provider<S> {
-        TODO("Not yet implemented")
-    }
-    override fun orElse(value: RegularFile): Provider<RegularFile> = TODO("Not yet implemented")
-    override fun orElse(p0: Provider<out RegularFile>): Provider<RegularFile> = TODO("Not yet implemented")
-    @Suppress("OVERRIDE_DEPRECATION")
-    override fun forUseAtConfigurationTime(): Provider<RegularFile> = TODO("Not yet implemented")
-    override fun <B : Any?, R : Any?> zip(p0: Provider<B>, p1: BiFunction<RegularFile, B, R>): Provider<R> {
-        TODO("Not yet implemented")
-    }
-    override fun finalizeValue() = TODO("Not yet implemented")
-    override fun finalizeValueOnRead() = TODO("Not yet implemented")
-    override fun disallowChanges() = TODO("Not yet implemented")
-    override fun disallowUnsafeRead() = TODO("Not yet implemented")
-    override fun set(file: File?) = TODO("Not yet implemented")
-    override fun set(value: RegularFile?) = TODO("Not yet implemented")
-    override fun set(provider: Provider<out RegularFile>) = TODO("Not yet implemented")
-    override fun value(value: RegularFile?): RegularFileProperty = TODO("Not yet implemented")
-    override fun value(provider: Provider<out RegularFile>): RegularFileProperty = TODO("Not yet implemented")
-    override fun convention(value: RegularFile?): RegularFileProperty = TODO("Not yet implemented")
-    override fun convention(provider: Provider<out RegularFile>): RegularFileProperty {
-        TODO("Not yet implemented")
-    }
-    override fun fileValue(file: File?): RegularFileProperty = TODO("Not yet implemented")
-    override fun fileProvider(provider: Provider<File>): RegularFileProperty = TODO("Not yet implemented")
-    override fun getLocationOnly(): Provider<RegularFile> = TODO("Not yet implemented")
 }
