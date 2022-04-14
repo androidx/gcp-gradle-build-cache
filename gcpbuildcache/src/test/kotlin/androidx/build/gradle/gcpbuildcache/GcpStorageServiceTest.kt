@@ -17,14 +17,9 @@
 
 package androidx.build.gradle.gcpbuildcache
 
-import org.gradle.api.Transformer
-import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Provider
-import org.junit.Assume
+import org.junit.Assume.assumeNotNull
 import org.junit.Test
 import java.io.File
-import java.util.function.BiFunction
 
 /**
  * These tests only run with GRADLE_CACHE_SERVICE_ACCOUNT_PATH set
@@ -34,7 +29,7 @@ class GcpStorageServiceTest {
 
     @Test
     fun testStoreBlob() {
-        Assume.assumeNotNull(serviceAccountPath)
+        assumeNotNull(serviceAccountPath)
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
@@ -53,7 +48,7 @@ class GcpStorageServiceTest {
 
     @Test
     fun testLoadBlob() {
-        Assume.assumeNotNull(serviceAccountPath)
+        assumeNotNull(serviceAccountPath)
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
@@ -75,7 +70,7 @@ class GcpStorageServiceTest {
 
     @Test
     fun testStoreBlob_noPushSupport() {
-        Assume.assumeNotNull(serviceAccountPath)
+        assumeNotNull(serviceAccountPath)
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
@@ -93,7 +88,7 @@ class GcpStorageServiceTest {
 
     @Test
     fun testLoadBlob_noPushSupport() {
-        Assume.assumeNotNull(serviceAccountPath)
+        assumeNotNull(serviceAccountPath)
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
@@ -124,7 +119,7 @@ class GcpStorageServiceTest {
 
     @Test
     fun testLoadBlob_disabled() {
-        Assume.assumeNotNull(serviceAccountPath)
+        assumeNotNull(serviceAccountPath)
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
