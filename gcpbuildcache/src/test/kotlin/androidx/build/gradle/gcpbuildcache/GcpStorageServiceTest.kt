@@ -31,7 +31,6 @@ import java.util.function.BiFunction
  */
 class GcpStorageServiceTest {
     private val serviceAccountPath = System.getenv()["GRADLE_CACHE_SERVICE_ACCOUNT_PATH"]
-    private val serviceAccountPathProperty: File = File(serviceAccountPath)
 
     @Test
     fun testStoreBlob() {
@@ -39,7 +38,7 @@ class GcpStorageServiceTest {
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
-            serviceAccountPath = serviceAccountPathProperty,
+            serviceAccountPath = File(serviceAccountPath!!),
             isPush = true,
             isEnabled = true
         )
@@ -58,7 +57,7 @@ class GcpStorageServiceTest {
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
-            serviceAccountPath = serviceAccountPathProperty,
+            serviceAccountPath = File(serviceAccountPath!!),
             isPush = true,
             isEnabled = true
         )
@@ -76,10 +75,11 @@ class GcpStorageServiceTest {
 
     @Test
     fun testStoreBlob_noPushSupport() {
+        Assume.assumeNotNull(serviceAccountPath)
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
-            serviceAccountPath = serviceAccountPathProperty,
+            serviceAccountPath = File(serviceAccountPath!!),
             isPush = false,
             isEnabled = true
         )
@@ -97,14 +97,14 @@ class GcpStorageServiceTest {
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
-            serviceAccountPath = serviceAccountPathProperty,
+            serviceAccountPath = File(serviceAccountPath!!),
             isPush = true,
             isEnabled = true
         )
         val readOnlyStorageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
-            serviceAccountPath = serviceAccountPathProperty,
+            serviceAccountPath = File(serviceAccountPath),
             isPush = false,
             isEnabled = true
         )
@@ -128,7 +128,7 @@ class GcpStorageServiceTest {
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
-            serviceAccountPath = serviceAccountPathProperty,
+            serviceAccountPath = File(serviceAccountPath!!),
             isPush = true,
             isEnabled = false
         )
