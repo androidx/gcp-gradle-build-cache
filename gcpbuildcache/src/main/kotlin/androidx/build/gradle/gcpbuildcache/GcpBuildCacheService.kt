@@ -36,7 +36,7 @@ import java.io.File
 internal class GcpBuildCacheService(
     private val projectId: String,
     private val bucketName: String,
-    serviceAccountPath: File,
+    gcpCredentials: GcpCredentials,
     isPush: Boolean,
     isEnabled: Boolean,
     inTestMode: Boolean = false
@@ -46,7 +46,7 @@ internal class GcpBuildCacheService(
         // Use an implementation backed by the File System when in test mode.
         FileSystemStorageService(projectId, bucketName, isPush, isEnabled)
     } else {
-        GcpStorageService(projectId, bucketName, serviceAccountPath, isPush, isEnabled)
+        GcpStorageService(projectId, bucketName, gcpCredentials, isPush, isEnabled)
     }
 
     override fun close() {

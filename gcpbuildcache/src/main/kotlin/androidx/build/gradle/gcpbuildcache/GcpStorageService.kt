@@ -25,7 +25,6 @@ import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.StorageOptions
 import com.google.cloud.storage.StorageRetryStrategy
 import org.gradle.api.GradleException
-import java.io.File
 import java.io.InputStream
 import java.nio.channels.Channels
 
@@ -35,12 +34,12 @@ import java.nio.channels.Channels
 internal class GcpStorageService(
     override val projectId: String,
     override val bucketName: String,
-    private val serviceAccountPath: File,
+    gcpCredentials: GcpCredentials,
     override val isPush: Boolean,
     override val isEnabled: Boolean,
 ) : StorageService {
 
-    private val storageOptions by lazy { storageOptions(projectId, serviceAccountPath, isPush) }
+    private val storageOptions by lazy { storageOptions(projectId, gcpCredentials, isPush) }
 
     override fun load(cacheKey: String): InputStream? {
         if (!isEnabled) {
@@ -109,10 +108,10 @@ internal class GcpStorageService(
 
         private fun storageOptions(
             projectId: String,
-            serviceAccountPath: File,
+            gcpCredentials: GcpCredentials,
             isPushSupported: Boolean
         ): StorageOptions? {
-            val credentials = credentials(serviceAccountPath, isPushSupported) ?: return null
+            val credentials = credentials(gcpCredentials, isPushSupported) ?: return null
             val retrySettings = RetrySettings.newBuilder()
             retrySettings.maxAttempts = 3
             retrySettings.retryDelayMultiplier = 2.0
@@ -122,18 +121,27 @@ internal class GcpStorageService(
         }
 
         private fun credentials(
-            path: File,
+            gcpCredentials: GcpCredentials,
             isPushSupported: Boolean
         ): GoogleCredentials? {
-            if (!path.exists()) throw GradleException("Your specified $path does not exist")
-            if (!path.isFile) throw GradleException("Your specified $path is not a file")
             val scopes = mutableListOf(
                 STORAGE_READ_ONLY,
             )
             if (isPushSupported) {
                 scopes += listOf(STORAGE_READ_WRITE, STORAGE_FULL_CONTROL)
             }
-            return GoogleCredentials.fromStream(path.inputStream()).createScoped(scopes)
+            return when (gcpCredentials) {
+                is ApplicationDefaultGcpCredentials -> {
+                    GoogleCredentials.getApplicationDefault().createScoped(scopes)
+                }
+                is ExportedKeyGcpCredentials -> {
+                    val path = gcpCredentials.pathToCredentials
+                    if (!path.exists()) throw GradleException("Your specified $path does not exist")
+                    if (!path.isFile) throw GradleException("Your specified $path is not a file")
+
+                    GoogleCredentials.fromStream(path.inputStream()).createScoped(scopes)
+                }
+            }
         }
     }
 }

@@ -31,11 +31,15 @@ internal class GcpBuildCacheServiceFactory : BuildCacheServiceFactory<GcpBuildCa
             .config("bucketName", buildCache.bucketName)
             .config("isPushSupported", "${buildCache.isPush}")
             .config("isEnabled", "${buildCache.isEnabled}")
+            .config(
+                "usingExportedKeyCredentials",
+                "${buildCache.credentials is ExportedKeyGcpCredentials}"
+            )
 
         return GcpBuildCacheService(
             buildCache.projectId,
             buildCache.bucketName,
-            buildCache.serviceAccountPath,
+            buildCache.credentials,
             buildCache.isPush,
             buildCache.isEnabled
         )

@@ -33,7 +33,7 @@ class GcpStorageServiceTest {
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
-            serviceAccountPath = File(serviceAccountPath!!),
+            gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             isPush = true,
             isEnabled = true
         )
@@ -52,7 +52,7 @@ class GcpStorageServiceTest {
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
-            serviceAccountPath = File(serviceAccountPath!!),
+            gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             isPush = true,
             isEnabled = true
         )
@@ -74,7 +74,7 @@ class GcpStorageServiceTest {
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
-            serviceAccountPath = File(serviceAccountPath!!),
+            gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             isPush = false,
             isEnabled = true
         )
@@ -92,14 +92,14 @@ class GcpStorageServiceTest {
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
-            serviceAccountPath = File(serviceAccountPath!!),
+            gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             isPush = true,
             isEnabled = true
         )
         val readOnlyStorageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
-            serviceAccountPath = File(serviceAccountPath),
+            gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath)),
             isPush = false,
             isEnabled = true
         )
@@ -123,7 +123,7 @@ class GcpStorageServiceTest {
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
-            serviceAccountPath = File(serviceAccountPath!!),
+            gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             isPush = true,
             isEnabled = false
         )
