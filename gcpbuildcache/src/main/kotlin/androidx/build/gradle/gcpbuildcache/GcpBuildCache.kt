@@ -18,7 +18,6 @@
 package androidx.build.gradle.gcpbuildcache
 
 import org.gradle.caching.configuration.AbstractBuildCache
-import java.io.File
 
 /**
  * Gradle Build Cache that uses GCP buckets as a backing for load and store
@@ -38,7 +37,7 @@ abstract class GcpBuildCache(
     lateinit var bucketName: String
 
     /**
-     * Path to the credentials of the service account.
+     * The type of credentials to use to connect to the Google Cloud Platform project instance.
      */
-    lateinit var serviceAccountPath: File
+    var credentials: GcpCredentials = ApplicationDefaultGcpCredentials
 }

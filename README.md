@@ -15,13 +15,14 @@ buildCache {
     remote(androidx.build.gradle.gcpbuildcache.GcpBuildCache::class) {
         projectId = "foo"
         bucketName = "bar"
-        serviceAccountPath = File("path/to/credentials.json")
+        credentials = ExportedKeyGcpCredentials(File("path/to/credentials.json"))
         isPush = inCi
   }
 }
 ```
 
-- `projectId`, `bucketName`, and `serviceAccountPath` are required
+- `projectId`, `bucketName` are required
+- `credentials` defaults to `ApplicationDefaultGcpCredentials`, but can also be set to `ExportedKeyGcpCredentials`
 - `isPush` defaults to `false`.
 
 ## Development
