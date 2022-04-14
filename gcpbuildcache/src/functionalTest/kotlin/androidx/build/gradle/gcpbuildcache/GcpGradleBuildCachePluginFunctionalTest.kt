@@ -20,10 +20,10 @@
  */
 package androidx.build.gradle.gcpbuildcache
 
-import kotlin.test.Test
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import kotlin.test.Test
 
 /**
  * A simple functional test for the 'androidx.build.gradle.gcpbuildcache.GcpBuildCache' plugin.

@@ -17,16 +17,23 @@
 
 package androidx.build.gradle.gcpbuildcache
 
-import org.junit.Ignore
+import org.junit.Assume.assumeNotNull
 import org.junit.Test
+import java.io.File
 
-@Ignore // These can only run with GRADLE_CACHE_SERVICE_ACCOUNT_PATH set
+/**
+ * These tests only run with GRADLE_CACHE_SERVICE_ACCOUNT_PATH set
+ */
 class GcpStorageServiceTest {
+    private val serviceAccountPath = System.getenv()["GRADLE_CACHE_SERVICE_ACCOUNT_PATH"]
+
     @Test
     fun testStoreBlob() {
+        assumeNotNull(serviceAccountPath)
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
+            serviceAccountPath = File(serviceAccountPath!!),
             isPush = true,
             isEnabled = true
         )
@@ -41,9 +48,11 @@ class GcpStorageServiceTest {
 
     @Test
     fun testLoadBlob() {
+        assumeNotNull(serviceAccountPath)
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
+            serviceAccountPath = File(serviceAccountPath!!),
             isPush = true,
             isEnabled = true
         )
@@ -61,9 +70,11 @@ class GcpStorageServiceTest {
 
     @Test
     fun testStoreBlob_noPushSupport() {
+        assumeNotNull(serviceAccountPath)
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
+            serviceAccountPath = File(serviceAccountPath!!),
             isPush = false,
             isEnabled = true
         )
@@ -77,15 +88,18 @@ class GcpStorageServiceTest {
 
     @Test
     fun testLoadBlob_noPushSupport() {
+        assumeNotNull(serviceAccountPath)
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
+            serviceAccountPath = File(serviceAccountPath!!),
             isPush = true,
             isEnabled = true
         )
         val readOnlyStorageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
+            serviceAccountPath = File(serviceAccountPath),
             isPush = false,
             isEnabled = true
         )
@@ -105,9 +119,11 @@ class GcpStorageServiceTest {
 
     @Test
     fun testLoadBlob_disabled() {
+        assumeNotNull(serviceAccountPath)
         val storageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
+            serviceAccountPath = File(serviceAccountPath!!),
             isPush = true,
             isEnabled = false
         )
