@@ -17,7 +17,7 @@ buildCache {
         bucketName = "bar"
         credentials = ExportedKeyGcpCredentials(File("path/to/credentials.json"))
         isPush = inCi
-  }
+    }
 }
 ```
 
