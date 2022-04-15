@@ -90,3 +90,7 @@ tasks.named<Task>("check") {
     // Include functionalTest as part of the check lifecycle
     dependsOn(testing.suites.named("functionalTest"))
 }
+
+tasks.withType<Sign>().configureEach {
+    onlyIf { project.hasProperty("signing.keyId") }
+}
