@@ -25,6 +25,7 @@ import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.StorageOptions
 import com.google.cloud.storage.StorageRetryStrategy
 import org.gradle.api.GradleException
+import org.gradle.api.logging.Logging
 import java.io.InputStream
 import java.nio.channels.Channels
 
@@ -43,23 +44,30 @@ internal class GcpStorageService(
 
     override fun load(cacheKey: String): InputStream? {
         if (!isEnabled) {
+            logger.info("Not Enabled")
             return null
         }
 
         val blobId = BlobId.of(bucketName, cacheKey)
+        logger.info("Loading $cacheKey from ${blobId.name}")
         val readChannel = load(storageOptions, blobId) ?: return null
         return Channels.newInputStream(readChannel)
     }
 
     override fun store(cacheKey: String, contents: ByteArray): Boolean {
+
         if (!isEnabled) {
+            logger.info("Not Enabled")
             return false
         }
 
         if (!isPush) {
+            logger.info("No push support")
             return false
         }
         val blobId = BlobId.of(bucketName, cacheKey)
+
+        logger.info("Storing $cacheKey into ${blobId.name}")
         return store(storageOptions, blobId, contents)
     }
 
@@ -80,6 +88,11 @@ internal class GcpStorageService(
     }
 
     companion object {
+
+        private val logger by lazy {
+            Logging.getLogger("GcpStorageService")
+        }
+
         // The OAuth scopes for reading and writing to buckets.
         // https://cloud.google.com/storage/docs/authentication
         private const val STORAGE_READ_ONLY = "https://www.googleapis.com/auth/devstorage.read_only"
