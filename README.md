@@ -11,8 +11,11 @@ plugins {
     id("androidx.build.gradle.gcpbuildcache") version "1.0.0-alpha01"
 }
 
+import androidx.build.gradle.gcpbuildcache.GcpBuildCache
+import androidx.build.gradle.gcpbuildcache.ExportedKeyGcpCredentials
+
 buildCache {
-    remote(androidx.build.gradle.gcpbuildcache.GcpBuildCache::class) {
+    remote(GcpBuildCache::class) {
         projectId = "foo"
         bucketName = "bar"
         credentials = ExportedKeyGcpCredentials(File("path/to/credentials.json"))
