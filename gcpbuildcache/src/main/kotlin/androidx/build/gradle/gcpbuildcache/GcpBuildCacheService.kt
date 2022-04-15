@@ -17,13 +17,12 @@
 
 package androidx.build.gradle.gcpbuildcache
 
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.logging.Logging
 import org.gradle.caching.BuildCacheEntryReader
 import org.gradle.caching.BuildCacheEntryWriter
 import org.gradle.caching.BuildCacheKey
 import org.gradle.caching.BuildCacheService
 import java.io.ByteArrayOutputStream
-import java.io.File
 
 /**
  * The service that responds to Gradle's request to load and store results for a given
@@ -54,6 +53,7 @@ internal class GcpBuildCacheService(
     }
 
     override fun load(key: BuildCacheKey, reader: BuildCacheEntryReader): Boolean {
+        logger.info("Loading ${key.blobKey()}")
         val cacheKey = key.blobKey()
         val input = storageService.load(cacheKey) ?: return false
         reader.readFrom(input)
@@ -61,6 +61,7 @@ internal class GcpBuildCacheService(
     }
 
     override fun store(key: BuildCacheKey, writer: BuildCacheEntryWriter) {
+        logger.info("Storing ${key.blobKey()}")
         val cacheKey = key.blobKey()
         val output = ByteArrayOutputStream()
         output.use {
@@ -72,6 +73,10 @@ internal class GcpBuildCacheService(
     companion object {
         // Build Cache Key Helpers
         private val SLASHES = """"/+""".toRegex()
+
+        private val logger by lazy {
+            Logging.getLogger("GcpBuildCacheService")
+        }
 
         internal fun BuildCacheKey.blobKey(): String {
             // Slashes are special when it comes to cache keys.
