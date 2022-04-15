@@ -28,11 +28,24 @@ buildCache {
 - `credentials` defaults to `ApplicationDefaultGcpCredentials`, but can also be set to `ExportedKeyGcpCredentials`
 - `isPush` defaults to `false`.
 
-## Development
+---
 
-Set up the following environment variables for service account credentials to run all the test.
+If you are using Groovy, then you should do the following:
 
-```bash
-# Gradle Cache Service Account Path
-export GRADLE_CACHE_SERVICE_ACCOUNT_PATH=$HOME/.gradle-cache/androidx-dev-prod-build-cache-writer.json
+```groovy
+plugins {
+    id("androidx.build.gradle.gcpbuildcache") version "1.0.0-alpha01"
+}
+
+import androidx.build.gradle.gcpbuildcache.GcpBuildCache
+import androidx.build.gradle.gcpbuildcache.ExportedKeyGcpCredentials
+
+buildCache {
+    remote(GcpBuildCache) {
+        projectId = "projectName"
+        bucketName = "storageBucketName"
+        credentials = new ExportedKeyGcpCredentials(new File("path/to/credentials.json"))
+        push = inCi
+    }
+}
 ```
