@@ -18,6 +18,7 @@
 plugins {
     id("java-gradle-plugin")
     id("maven-publish")
+    id("signing")
     id("com.gradle.plugin-publish") version "1.0.0-rc-1"
     id("org.jetbrains.kotlin.jvm") version "1.6.20"
 }
@@ -33,6 +34,7 @@ dependencies {
 }
 
 pluginBundle {
+    website = "https://github.com/androidx/gcp-gradle-build-cache"
     vcsUrl = "https://github.com/androidx/gcp-gradle-build-cache"
     tags = listOf("buildcache", "gcp", "caching")
 }
