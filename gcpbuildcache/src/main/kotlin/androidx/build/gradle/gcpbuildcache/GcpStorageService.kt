@@ -20,6 +20,7 @@ package androidx.build.gradle.gcpbuildcache
 import com.google.api.gax.retrying.RetrySettings
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.ReadChannel
+import com.google.cloud.http.HttpTransportOptions
 import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.StorageOptions
@@ -93,6 +94,10 @@ internal class GcpStorageService(
             Logging.getLogger("GcpStorageService")
         }
 
+        private val transportOptions by lazy {
+            GcpTransportOptions(HttpTransportOptions.newBuilder())
+        }
+
         // The OAuth scopes for reading and writing to buckets.
         // https://cloud.google.com/storage/docs/authentication
         private const val STORAGE_READ_ONLY = "https://www.googleapis.com/auth/devstorage.read_only"
@@ -130,7 +135,9 @@ internal class GcpStorageService(
             retrySettings.retryDelayMultiplier = 2.0
             return StorageOptions.newBuilder().setCredentials(credentials)
                 .setStorageRetryStrategy(StorageRetryStrategy.getUniformStorageRetryStrategy()).setProjectId(projectId)
-                .setRetrySettings(retrySettings.build()).build()
+                .setRetrySettings(retrySettings.build())
+                .setTransportOptions(transportOptions)
+                .build()
         }
 
         private fun credentials(
@@ -151,8 +158,9 @@ internal class GcpStorageService(
                     val path = gcpCredentials.pathToCredentials
                     if (!path.exists()) throw GradleException("Credentials path $path does not exist")
                     if (!path.isFile) throw GradleException("Credentials path $path is not a file")
-
-                    GoogleCredentials.fromStream(path.inputStream()).createScoped(scopes)
+                    // Use the underlying transport factory to ensure logging is disabled.
+                    GoogleCredentials.fromStream(path.inputStream(), transportOptions.httpTransportFactory)
+                        .createScoped(scopes)
                 }
             }
         }
