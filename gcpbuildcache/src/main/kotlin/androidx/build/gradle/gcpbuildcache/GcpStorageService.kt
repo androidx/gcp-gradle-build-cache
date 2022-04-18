@@ -155,12 +155,13 @@ internal class GcpStorageService(
                     GoogleCredentials.getApplicationDefault().createScoped(scopes)
                 }
                 is ExportedKeyGcpCredentials -> {
-                    val path = gcpCredentials.pathToCredentials
-                    if (!path.exists()) throw GradleException("Credentials path $path does not exist")
-                    if (!path.isFile) throw GradleException("Credentials path $path is not a file")
+                    val contents = gcpCredentials.credentials.invoke()
+                    if (contents.isBlank()) throw GradleException("Credentials are empty.")
                     // Use the underlying transport factory to ensure logging is disabled.
-                    GoogleCredentials.fromStream(path.inputStream(), transportOptions.httpTransportFactory)
-                        .createScoped(scopes)
+                    GoogleCredentials.fromStream(
+                        contents.byteInputStream(charset = Charsets.UTF_8),
+                        transportOptions.httpTransportFactory
+                    ).createScoped(scopes)
                 }
             }
         }
