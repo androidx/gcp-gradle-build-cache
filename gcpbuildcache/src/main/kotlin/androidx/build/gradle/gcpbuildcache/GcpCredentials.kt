@@ -28,11 +28,16 @@ sealed interface GcpCredentials
 /**
  * Use Application Default to authenticate to Google Cloud Platform.
  */
-object ApplicationDefaultGcpCredentials: GcpCredentials
+object ApplicationDefaultGcpCredentials : GcpCredentials
 
 /**
  * Use Service Account to authenticate to Google Cloud Platform.
  *
- * @param pathToCredentials a file that stores the exported service account credentials.
+ * @param credentials a block which returns the exported service account credentials payload.
  */
-class ExportedKeyGcpCredentials(val pathToCredentials: File): GcpCredentials
+class ExportedKeyGcpCredentials(val credentials: () -> String) : GcpCredentials {
+    /**
+     * Builds an [ExportedKeyGcpCredentials] from a file containing the exported service account keys.
+     */
+    constructor(file: File) : this({ file.readText() })
+}
