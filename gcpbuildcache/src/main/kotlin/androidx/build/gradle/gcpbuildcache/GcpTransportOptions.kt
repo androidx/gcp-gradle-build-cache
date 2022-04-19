@@ -18,8 +18,11 @@
 package androidx.build.gradle.gcpbuildcache
 
 import com.google.api.client.http.HttpRequestInitializer
+import com.google.api.client.http.HttpTransport
 import com.google.cloud.ServiceOptions
 import com.google.cloud.http.HttpTransportOptions
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * Sets up transport options and disables logging.
@@ -31,6 +34,14 @@ internal class GcpTransportOptions(builder: Builder) : HttpTransportOptions(buil
         return HttpRequestInitializer {
             it.isLoggingEnabled = false
             initializer.initialize(it)
+        }
+    }
+
+    companion object {
+        init {
+            // Force log level to config
+            val logger = Logger.getLogger(HttpTransport::class.java.name)
+            logger.level = Level.SEVERE
         }
     }
 }
