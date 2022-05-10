@@ -21,10 +21,7 @@ import com.google.api.gax.retrying.RetrySettings
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.ReadChannel
 import com.google.cloud.http.HttpTransportOptions
-import com.google.cloud.storage.BlobId
-import com.google.cloud.storage.BlobInfo
-import com.google.cloud.storage.StorageOptions
-import com.google.cloud.storage.StorageRetryStrategy
+import com.google.cloud.storage.*
 import org.gradle.api.GradleException
 import org.gradle.api.logging.Logging
 import java.io.InputStream
@@ -109,14 +106,22 @@ internal class GcpStorageService(
         private fun load(storage: StorageOptions?, blobId: BlobId): ReadChannel? {
             if (storage == null) return null
             val blob = storage.service.get(blobId) ?: return null
-            return blob.reader()
+            val reader = blob.reader()
+            // We don't expect to store objects larger than Int.MAX_VALUE
+            reader.setChunkSize(blob.size.toInt())
+            return reader
         }
 
         private fun store(storage: StorageOptions?, blobId: BlobId, contents: ByteArray): Boolean {
             if (storage == null) return false
             val blobInfo = BlobInfo.newBuilder(blobId).build()
-            storage.service.createFrom(blobInfo, contents.inputStream())
-            return true
+            return try {
+                storage.service.createFrom(blobInfo, contents.inputStream())
+                true
+            } catch (storageException: StorageException) {
+                logger.debug("Unable to store Blob ($blobId)", storageException)
+                false
+            }
         }
 
         private fun delete(storage: StorageOptions?, blobId: BlobId): Boolean {
@@ -131,8 +136,8 @@ internal class GcpStorageService(
         ): StorageOptions? {
             val credentials = credentials(gcpCredentials, isPushSupported) ?: return null
             val retrySettings = RetrySettings.newBuilder()
-            retrySettings.maxAttempts = 3
-            retrySettings.retryDelayMultiplier = 2.0
+            // We don't want retries.
+            retrySettings.maxAttempts = 0
             return StorageOptions.newBuilder().setCredentials(credentials)
                 .setStorageRetryStrategy(StorageRetryStrategy.getUniformStorageRetryStrategy()).setProjectId(projectId)
                 .setRetrySettings(retrySettings.build())
