@@ -20,7 +20,10 @@ package androidx.build.gradle.gcpbuildcache
 import org.gradle.caching.BuildCacheService
 import org.gradle.caching.BuildCacheServiceFactory
 
-internal class GcpBuildCacheServiceFactory : BuildCacheServiceFactory<GcpBuildCache> {
+/**
+ * Factory used by Gradle to create GcpBuildCache instances.
+ */
+class GcpBuildCacheServiceFactory : BuildCacheServiceFactory<GcpBuildCache> {
     override fun createBuildCacheService(
         buildCache: GcpBuildCache,
         describer: BuildCacheServiceFactory.Describer,
