@@ -8,13 +8,15 @@ In your `settings.gradle.kts` file add the following
 
 ```kotlin
 plugins {
-    id("androidx.build.gradle.gcpbuildcache") version "1.0.0-alpha02"
+    id("androidx.build.gradle.gcpbuildcache") version "1.0.0-alpha03"
 }
 
 import androidx.build.gradle.gcpbuildcache.GcpBuildCache
+import androidx.build.gradle.gcpbuildcache.GcpBuildCacheServiceFactory
 import androidx.build.gradle.gcpbuildcache.ExportedKeyGcpCredentials
 
 buildCache {
+    registerBuildCacheService(GcpBuildCache::class, GcpBuildCacheServiceFactory::class)
     remote(GcpBuildCache::class) {
         projectId = "foo"
         bucketName = "bar"
@@ -34,13 +36,15 @@ If you are using Groovy, then you should do the following:
 
 ```groovy
 plugins {
-    id("androidx.build.gradle.gcpbuildcache") version "1.0.0-alpha02"
+    id("androidx.build.gradle.gcpbuildcache") version "1.0.0-alpha03"
 }
 
 import androidx.build.gradle.gcpbuildcache.GcpBuildCache
+import androidx.build.gradle.gcpbuildcache.GcpBuildCacheServiceFactory
 import androidx.build.gradle.gcpbuildcache.ExportedKeyGcpCredentials
 
 buildCache {
+    registerBuildCacheService(GcpBuildCache, GcpBuildCacheServiceFactory)
     remote(GcpBuildCache) {
         projectId = "projectName"
         bucketName = "storageBucketName"
