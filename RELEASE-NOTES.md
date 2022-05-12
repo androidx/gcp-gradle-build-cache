@@ -1,5 +1,9 @@
 # Release notes for GCP backed Gradle Remote Cache
 
+## 1.0.0-alpha04
+
+- Handles exceptions when fetching `BlobInfo`s and `ReadChannel`s from the storage service.
+
 ## 1.0.0-alpha03
 
 - Fixes issue [19](https://github.com/androidx/gcp-gradle-build-cache/issues/19).
