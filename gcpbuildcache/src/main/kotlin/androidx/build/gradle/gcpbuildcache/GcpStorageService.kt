@@ -105,11 +105,16 @@ internal class GcpStorageService(
 
         private fun load(storage: StorageOptions?, blobId: BlobId): ReadChannel? {
             if (storage == null) return null
-            val blob = storage.service.get(blobId) ?: return null
-            val reader = blob.reader()
-            // We don't expect to store objects larger than Int.MAX_VALUE
-            reader.setChunkSize(blob.size.toInt())
-            return reader
+            return try {
+                val blob = storage.service.get(blobId) ?: return null
+                val reader = blob.reader()
+                // We don't expect to store objects larger than Int.MAX_VALUE
+                reader.setChunkSize(blob.size.toInt())
+                reader
+            } catch (storageException: StorageException) {
+                logger.debug("Unable to load Blob ($blobId)", storageException)
+                null
+            }
         }
 
         private fun store(storage: StorageOptions?, blobId: BlobId, contents: ByteArray): Boolean {
