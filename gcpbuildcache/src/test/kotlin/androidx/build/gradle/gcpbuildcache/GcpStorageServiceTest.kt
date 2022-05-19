@@ -35,7 +35,8 @@ class GcpStorageServiceTest {
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             isPush = true,
-            isEnabled = true
+            isEnabled = true,
+            sizeThreshold = 0L
         )
         storageService.use {
             val cacheKey = "test-store.txt"
@@ -54,7 +55,8 @@ class GcpStorageServiceTest {
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             isPush = true,
-            isEnabled = true
+            isEnabled = true,
+            sizeThreshold = 0L
         )
         storageService.use {
             val cacheKey = "test-load.txt"
@@ -76,7 +78,8 @@ class GcpStorageServiceTest {
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             isPush = false,
-            isEnabled = true
+            isEnabled = true,
+            sizeThreshold = 0L
         )
         storageService.use {
             val cacheKey = "test-store-no-push.txt"
@@ -94,14 +97,16 @@ class GcpStorageServiceTest {
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             isPush = true,
-            isEnabled = true
+            isEnabled = true,
+            sizeThreshold = 0L
         )
         val readOnlyStorageService = GcpStorageService(
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath)),
             isPush = false,
-            isEnabled = true
+            isEnabled = true,
+            sizeThreshold = 0L
         )
         storageService.use {
             readOnlyStorageService.use {
@@ -125,7 +130,8 @@ class GcpStorageServiceTest {
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             isPush = true,
-            isEnabled = false
+            isEnabled = false,
+            sizeThreshold = 0L
         )
         storageService.use {
             val cacheKey = "test-store-disabled.txt"

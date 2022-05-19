@@ -17,15 +17,14 @@
 
 package androidx.build.gradle.gcpbuildcache
 
+import androidx.build.gradle.gcpbuildcache.FileHandleInputStream.Companion.handleInputStream
 import com.google.api.gax.retrying.RetrySettings
 import com.google.auth.oauth2.GoogleCredentials
-import com.google.cloud.ReadChannel
 import com.google.cloud.http.HttpTransportOptions
 import com.google.cloud.storage.*
 import org.gradle.api.GradleException
 import org.gradle.api.logging.Logging
 import java.io.InputStream
-import java.nio.channels.Channels
 
 /**
  * An implementation of the [StorageService] that is backed by Google Cloud Storage.
@@ -36,6 +35,7 @@ internal class GcpStorageService(
     gcpCredentials: GcpCredentials,
     override val isPush: Boolean,
     override val isEnabled: Boolean,
+    private val sizeThreshold: Long = BLOB_SIZE_THRESHOLD
 ) : StorageService {
 
     private val storageOptions by lazy { storageOptions(projectId, gcpCredentials, isPush) }
@@ -48,8 +48,7 @@ internal class GcpStorageService(
 
         val blobId = BlobId.of(bucketName, cacheKey)
         logger.info("Loading $cacheKey from ${blobId.name}")
-        val readChannel = load(storageOptions, blobId) ?: return null
-        return Channels.newInputStream(readChannel)
+        return load(storageOptions, blobId, sizeThreshold)
     }
 
     override fun store(cacheKey: String, contents: ByteArray): Boolean {
@@ -103,14 +102,19 @@ internal class GcpStorageService(
         // Need full control for updating metadata
         private const val STORAGE_FULL_CONTROL = "https://www.googleapis.com/auth/devstorage.full_control"
 
-        private fun load(storage: StorageOptions?, blobId: BlobId): ReadChannel? {
+        private const val BLOB_SIZE_THRESHOLD = 50 * 1024 * 1024L
+
+        private fun load(storage: StorageOptions?, blobId: BlobId, sizeThreshold: Long): InputStream? {
             if (storage == null) return null
             return try {
                 val blob = storage.service.get(blobId) ?: return null
-                val reader = blob.reader()
-                // We don't expect to store objects larger than Int.MAX_VALUE
-                reader.setChunkSize(blob.size.toInt())
-                reader
+                return if (blob.size > sizeThreshold) {
+                    val path = FileHandleInputStream.create()
+                    blob.downloadTo(path)
+                    path.handleInputStream()
+                } else {
+                    blob.getContent().inputStream()
+                }
             } catch (storageException: StorageException) {
                 logger.debug("Unable to load Blob ($blobId)", storageException)
                 null
@@ -141,8 +145,7 @@ internal class GcpStorageService(
         ): StorageOptions? {
             val credentials = credentials(gcpCredentials, isPushSupported) ?: return null
             val retrySettings = RetrySettings.newBuilder()
-            // We don't want retries.
-            retrySettings.maxAttempts = 0
+            retrySettings.maxAttempts = 3
             return StorageOptions.newBuilder().setCredentials(credentials)
                 .setStorageRetryStrategy(StorageRetryStrategy.getUniformStorageRetryStrategy()).setProjectId(projectId)
                 .setRetrySettings(retrySettings.build())
