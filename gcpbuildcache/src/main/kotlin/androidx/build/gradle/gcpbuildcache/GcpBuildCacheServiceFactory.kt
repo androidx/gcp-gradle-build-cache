@@ -39,12 +39,14 @@ class GcpBuildCacheServiceFactory : BuildCacheServiceFactory<GcpBuildCache> {
                 "${buildCache.credentials is ExportedKeyGcpCredentials}"
             )
 
-        return GcpBuildCacheService(
+        val service = GcpBuildCacheService(
             buildCache.projectId,
             buildCache.bucketName,
             buildCache.credentials,
             buildCache.isPush,
             buildCache.isEnabled
         )
+        service.validateConfiguration()
+        return service
     }
 }

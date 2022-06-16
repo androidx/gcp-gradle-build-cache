@@ -45,8 +45,7 @@ gradlePlugin {
             id = "androidx.build.gradle.gcpbuildcache"
             displayName = "Gradle GCP Build Cache Plugin"
             description = """
-                Implementation of Gradle Build Cache that allows to use Google Cloud Platform
-                storage buckets as a back end.
+                - Warn when a user incorrectly configures GCP bucket to be used for the cache.
             """.trimIndent()
             implementationClass = "androidx.build.gradle.gcpbuildcache.GcpGradleBuildCachePlugin"
         }
@@ -54,7 +53,7 @@ gradlePlugin {
 }
 
 group = "androidx.build.gradle.gcpbuildcache"
-version = "1.0.0-alpha05"
+version = "1.0.0-alpha06"
 
 testing {
     suites {

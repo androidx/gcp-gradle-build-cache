@@ -59,4 +59,9 @@ interface StorageService : Closeable {
      * @param cacheKey is the unique key that can identify a resource that needs to be removed.
      */
     fun delete(cacheKey: String): Boolean
+
+    /**
+     * Checks of the current configuration is valid. Throws an exception if the state is bad.
+     */
+    fun validateConfiguration()
 }

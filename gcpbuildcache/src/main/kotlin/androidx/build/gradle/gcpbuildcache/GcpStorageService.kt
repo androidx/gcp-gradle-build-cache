@@ -45,7 +45,6 @@ internal class GcpStorageService(
             logger.info("Not Enabled")
             return null
         }
-
         val blobId = BlobId.of(bucketName, cacheKey)
         logger.info("Loading $cacheKey from ${blobId.name}")
         return load(storageOptions, blobId, sizeThreshold)
@@ -78,6 +77,16 @@ internal class GcpStorageService(
         }
         val blobId = BlobId.of(bucketName, cacheKey)
         return Companion.delete(storageOptions, blobId)
+    }
+
+    override fun validateConfiguration() {
+        if (storageOptions?.service?.get(bucketName, Storage.BucketGetOption.fields()) == null) {
+            throw Exception("""
+                Bucket $bucketName under project $projectId cannot be found or it is not accessible using the provided
+                credentials.
+                """.trimIndent()
+            )
+        }
     }
 
     override fun close() {

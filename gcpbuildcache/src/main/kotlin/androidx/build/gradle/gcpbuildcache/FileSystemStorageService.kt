@@ -76,6 +76,10 @@ internal class FileSystemStorageService(
         return file.delete()
     }
 
+    override fun validateConfiguration() {
+        // There is nothing to validate
+    }
+
     override fun close() {
         location.deleteRecursively()
     }

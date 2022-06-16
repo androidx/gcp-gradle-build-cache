@@ -1,5 +1,9 @@
 # Release notes for GCP backed Gradle Remote Cache
 
+## 1.0.0-alpha06
+
+- Warn when a user incorrectly configures GCP bucket to be used for the cache.
+
 ## 1.0.0-alpha05
 
 - Downloads `Blob`s to an intermediate `Buffer` or a `File` depending on the size of the blob.
