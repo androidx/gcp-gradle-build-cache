@@ -70,6 +70,10 @@ internal class GcpBuildCacheService(
         storageService.store(cacheKey, output.toByteArray())
     }
 
+    fun validateConfiguration() {
+        storageService.validateConfiguration()
+    }
+
     companion object {
         // Build Cache Key Helpers
         private val SLASHES = """"/+""".toRegex()
