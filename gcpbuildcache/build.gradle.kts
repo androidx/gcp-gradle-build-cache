@@ -19,8 +19,8 @@ plugins {
     id("java-gradle-plugin")
     id("maven-publish")
     id("signing")
-    id("com.gradle.plugin-publish") version "1.0.0-rc-1"
-    id("org.jetbrains.kotlin.jvm") version "1.6.20"
+    id("com.gradle.plugin-publish") version "1.0.0"
+    id("org.jetbrains.kotlin.jvm") version "1.7.10"
 }
 
 repositories {
@@ -30,7 +30,7 @@ repositories {
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("com.google.cloud:google-cloud-storage:2.6.0")
+    implementation("com.google.cloud:google-cloud-storage:2.9.3")
 }
 
 pluginBundle {
@@ -53,7 +53,7 @@ gradlePlugin {
 }
 
 group = "androidx.build.gradle.gcpbuildcache"
-version = "1.0.0-alpha06"
+version = "1.0.0-beta01"
 
 testing {
     suites {
