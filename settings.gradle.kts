@@ -27,3 +27,10 @@
 
 rootProject.name = "gcp-gradle-build-cache"
 include("gcpbuildcache")
+
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}

@@ -1,5 +1,9 @@
 # Release notes for GCP backed Gradle Remote Cache
 
+## 1.0.0-beta01
+
+- Update various dependencies (Kotlin, google-cloud-storage, Gradle plugin publish plugin)
+
 ## 1.0.0-alpha06
 
 - Warn when a user incorrectly configures GCP bucket to be used for the cache.
