@@ -17,6 +17,8 @@
 
 package androidx.build.gradle.gcpbuildcache
 
+import androidx.build.gradle.core.FileSystemStorageService
+import androidx.build.gradle.core.blobKey
 import org.gradle.api.logging.Logging
 import org.gradle.caching.BuildCacheEntryReader
 import org.gradle.caching.BuildCacheEntryWriter
@@ -43,7 +45,7 @@ internal class GcpBuildCacheService(
 
     private val storageService = if (inTestMode) {
         // Use an implementation backed by the File System when in test mode.
-        FileSystemStorageService(projectId, bucketName, isPush, isEnabled)
+        FileSystemStorageService(bucketName, isPush, isEnabled)
     } else {
         GcpStorageService(projectId, bucketName, gcpCredentials, isPush, isEnabled)
     }
@@ -75,18 +77,9 @@ internal class GcpBuildCacheService(
     }
 
     companion object {
-        // Build Cache Key Helpers
-        private val SLASHES = """"/+""".toRegex()
 
         private val logger by lazy {
             Logging.getLogger("GcpBuildCacheService")
-        }
-
-        internal fun BuildCacheKey.blobKey(): String {
-            // Slashes are special when it comes to cache keys.
-            // Under the hood, they are treated as a "folder/file" as long as there is
-            // a single `/`.
-            return hashCode.replace(SLASHES, "/")
         }
     }
 }

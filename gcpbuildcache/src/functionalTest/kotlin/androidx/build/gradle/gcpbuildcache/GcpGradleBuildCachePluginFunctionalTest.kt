@@ -39,13 +39,17 @@ class GcpGradleBuildCachePluginFunctionalTest {
     fun `can run tasks task`() {
         // Setup the test build
         getSettingsFile().writeText("""
+            import androidx.build.gradle.gcpbuildcache.ExportedKeyGcpCredentials
+
             plugins {
                 id("androidx.build.gradle.gcpbuildcache")
             }
+            
             buildCache {
                 remote(androidx.build.gradle.gcpbuildcache.GcpBuildCache::class) {
                     projectId = "foo"
                     bucketName = "bar"
+                    credentials = ExportedKeyGcpCredentials(File("path/to/credentials.json"))
                 }
             }
         """.trimIndent())
