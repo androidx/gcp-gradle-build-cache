@@ -20,8 +20,7 @@ package androidx.build.gradle.core
 import org.gradle.caching.configuration.AbstractBuildCache
 
 /**
- * Gradle Build Cache that uses GCP buckets as a backing for load and store
- * Gradle results.
+ * Gradle Build Cache that uses a cloud storage provider as a backing to load and store Gradle cache results.
  */
 abstract class RemoteGradleBuildCache : AbstractBuildCache() {
 

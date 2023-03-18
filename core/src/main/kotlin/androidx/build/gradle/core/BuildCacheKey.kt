@@ -19,6 +19,11 @@ package androidx.build.gradle.core
 
 import org.gradle.caching.BuildCacheKey
 
+/**
+ * Create a unique key that Gradle can use to get a handle on build cache entries
+ *
+ * This will be the name of the entry file on your storage system
+ * */
 fun BuildCacheKey.blobKey(): String {
     val slashes = """"/+""".toRegex()
     // Slashes are special when it comes to cache keys.
