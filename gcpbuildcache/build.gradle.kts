@@ -18,19 +18,13 @@
 plugins {
     id("maven-publish")
     id("signing")
-    id("com.gradle.plugin-publish") version "1.0.0"
-    id("org.jetbrains.kotlin.jvm") version "1.7.10"
-}
-
-repositories {
-    mavenCentral()
+    alias(libs.plugins.gradle.publish)
+    alias(libs.plugins.kotlin.jvm)
 }
 
 dependencies {
     implementation(project(":core"))
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("com.google.cloud:google-cloud-storage:2.9.3")
+    implementation(libs.google.cloud.storage)
 }
 
 pluginBundle {

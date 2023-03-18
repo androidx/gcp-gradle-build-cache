@@ -18,23 +18,17 @@
 plugins {
     id("maven-publish")
     id("signing")
-    id("com.gradle.plugin-publish") version "1.0.0"
-    id("org.jetbrains.kotlin.jvm") version "1.7.10"
-}
-
-repositories {
-    mavenCentral()
+    alias(libs.plugins.gradle.publish)
+    alias(libs.plugins.kotlin.jvm)
 }
 
 dependencies {
     implementation(project(":core"))
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation(platform("software.amazon.awssdk:bom:2.20.18"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("software.amazon.awssdk:s3")
-    implementation("software.amazon.awssdk:sso")
+    implementation(platform(libs.amazon.bom))
+    implementation(libs.amazon.s3)
+    implementation(libs.amazon.sso)
     // This has to be on the classpath to be able to read credentials. See: https://github.com/aws/aws-sdk-java/issues/1324
-    runtimeOnly("software.amazon.awssdk:sts")
+    runtimeOnly(libs.amazon.sts)
 }
 
 pluginBundle {

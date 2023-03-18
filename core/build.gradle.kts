@@ -16,17 +16,13 @@
  */
 
 plugins {
-    id("java-gradle-plugin")
-    id("org.jetbrains.kotlin.jvm") version "1.7.10"
-}
-
-repositories {
-    mavenCentral()
+    alias(libs.plugins.kotlin.jvm)
 }
 
 dependencies {
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation(gradleApi())
+    api(platform(libs.kotlin.bom))
+    api(libs.kotlin.stdlib)
 }
 
 testing {
