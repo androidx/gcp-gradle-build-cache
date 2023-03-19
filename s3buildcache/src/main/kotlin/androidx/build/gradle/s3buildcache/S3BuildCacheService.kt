@@ -24,6 +24,12 @@ import org.gradle.caching.BuildCacheEntryReader
 import org.gradle.caching.BuildCacheEntryWriter
 import org.gradle.caching.BuildCacheKey
 import org.gradle.caching.BuildCacheService
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.s3.S3Client
 import java.io.ByteArrayOutputStream
 
 /**
@@ -45,10 +51,13 @@ class S3BuildCacheService(
     inTestMode: Boolean = false
 ) : BuildCacheService {
 
+    private val client by lazy {
+        clientOptions(credentials(credentials), region)
+    }
     private val storageService = if (inTestMode) {
         FileSystemStorageService(bucketName, isPush, isEnabled)
     } else {
-        S3StorageService(credentials, bucketName, isPush, isEnabled, region, reducedRedundancy)
+        S3StorageService(bucketName, isPush, isEnabled, client, region, reducedRedundancy)
     }
 
     override fun load(key: BuildCacheKey, reader: BuildCacheEntryReader): Boolean {
@@ -81,6 +90,23 @@ class S3BuildCacheService(
 
         private val logger by lazy {
             Logging.getLogger("AwsS3BuildCacheService")
+        }
+
+        private fun clientOptions(credentials: AwsCredentialsProvider, region: String): S3Client {
+            return S3Client.builder()
+                .credentialsProvider(credentials)
+                .region(Region.of(region))
+                .build()
+        }
+
+        private fun credentials(s3Credentials: S3Credentials): AwsCredentialsProvider {
+            return when (s3Credentials) {
+                DefaultS3Credentials -> DefaultCredentialsProvider.create()
+                is SpecificCredentialsProvider -> s3Credentials.provider
+                is ExportedS3Credentials -> StaticCredentialsProvider.create(
+                    AwsBasicCredentials.create(s3Credentials.awsAccessKeyId, s3Credentials.awsSecretKey)
+                )
+            }
         }
     }
 }

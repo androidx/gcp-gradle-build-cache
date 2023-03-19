@@ -17,20 +17,52 @@
 
 package androidx.build.gradle.s3buildcache
 
+import com.adobe.testing.s3mock.S3MockApplication
+import com.adobe.testing.s3mock.S3MockApplication.*
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
+import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.s3.S3Client
+import java.net.URI
 
 /**
- * This test needs to be configured with the correct values for REGION, BUCKET_NAME,
- * and AWS credentials, therefore, it won't pass on CI as is.
+ * This test relies on a mock implementation of an AWS S3 server to run
  * */
 class S3StorageServiceTest {
+
+    private lateinit var s3MockApplication: S3MockApplication
+    private lateinit var client: S3Client
+
+    @Before
+    fun setUp() {
+        val serverConfig = mapOf(
+            PROP_INITIAL_BUCKETS to BUCKET_NAME,
+            PROP_SILENT to true
+        )
+        s3MockApplication = start(serverConfig)
+        val serviceEndpoint = "http://localhost:$DEFAULT_HTTP_PORT"
+        client = S3Client.builder()
+            .region(Region.of(REGION))
+            .credentialsProvider(AnonymousCredentialsProvider.create())
+            .endpointOverride(URI.create(serviceEndpoint))
+            .forcePathStyle(true) // https://github.com/adobe/S3Mock/issues/880
+            .build()
+    }
+
+    @After
+    fun tearDown() {
+        s3MockApplication.stop()
+        client.close()
+    }
 
     @Test
     fun testStoreBlob() {
         val storageService = S3StorageService(
             region = REGION,
             bucketName = BUCKET_NAME,
-            credentials = DefaultS3Credentials,
+            client = client,
             isPush = true,
             isEnabled = true,
             reducedRedundancy = true,
@@ -50,7 +82,7 @@ class S3StorageServiceTest {
         val storageService = S3StorageService(
             region = REGION,
             bucketName = BUCKET_NAME,
-            credentials = DefaultS3Credentials,
+            client = client,
             isPush = true,
             isEnabled = true,
             reducedRedundancy = true,
@@ -73,7 +105,7 @@ class S3StorageServiceTest {
         val storageService = S3StorageService(
             region = REGION,
             bucketName = BUCKET_NAME,
-            credentials = DefaultS3Credentials,
+            client = client,
             isPush = false,
             isEnabled = true,
             reducedRedundancy = true,
@@ -92,7 +124,7 @@ class S3StorageServiceTest {
         val storageService = S3StorageService(
             region = REGION,
             bucketName = BUCKET_NAME,
-            credentials = DefaultS3Credentials,
+            client = client,
             isPush = true,
             isEnabled = true,
             reducedRedundancy = true,
@@ -101,7 +133,7 @@ class S3StorageServiceTest {
         val readOnlyStorageService = S3StorageService(
             region = REGION,
             bucketName = BUCKET_NAME,
-            credentials = DefaultS3Credentials,
+            client = client,
             isPush = false,
             isEnabled = true,
             reducedRedundancy = true,
@@ -126,7 +158,7 @@ class S3StorageServiceTest {
         val storageService = S3StorageService(
             region = REGION,
             bucketName = BUCKET_NAME,
-            credentials = DefaultS3Credentials,
+            client = client,
             isPush = true,
             isEnabled = false,
             reducedRedundancy = true,
@@ -142,7 +174,7 @@ class S3StorageServiceTest {
 
     companion object {
 
-        private const val REGION = "region"
+        private const val REGION = "us-east-1"
         private const val BUCKET_NAME = "bucket-name"
         private const val SIZE_THRESHOLD = 50 * 1024 * 1024L
     }

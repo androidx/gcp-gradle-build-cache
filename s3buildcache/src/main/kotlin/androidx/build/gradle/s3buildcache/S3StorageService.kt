@@ -19,12 +19,7 @@ package androidx.build.gradle.s3buildcache
 
 import androidx.build.gradle.core.StorageService
 import org.gradle.api.logging.Logging
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.core.sync.RequestBody
-import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
@@ -34,16 +29,14 @@ import software.amazon.awssdk.services.s3.model.StorageClass.STANDARD
 import java.io.InputStream
 
 class S3StorageService(
-    credentials: S3Credentials,
     override val bucketName: String,
     override val isPush: Boolean,
     override val isEnabled: Boolean,
+    private val client: S3Client,
     private val region: String,
     private val reducedRedundancy: Boolean,
     private val sizeThreshold: Long = BLOB_SIZE_THRESHOLD
 ) : StorageService {
-
-    private val client by lazy { clientOptions(credentials(credentials), region) }
 
     override fun load(cacheKey: String): InputStream? {
         if (!isEnabled) {
@@ -120,23 +113,6 @@ class S3StorageService(
 
         private val logger by lazy {
             Logging.getLogger("AwsS3StorageService")
-        }
-
-        private fun clientOptions(credentials: AwsCredentialsProvider, region: String): S3Client {
-            return S3Client.builder()
-                .credentialsProvider(credentials)
-                .region(Region.of(region))
-                .build()
-        }
-
-        private fun credentials(s3Credentials: S3Credentials): AwsCredentialsProvider {
-            return when (s3Credentials) {
-                DefaultS3Credentials -> DefaultCredentialsProvider.create()
-                is SpecificCredentialsProvider -> s3Credentials.provider
-                is ExportedS3Credentials -> StaticCredentialsProvider.create(
-                    AwsBasicCredentials.create(s3Credentials.awsAccessKeyId, s3Credentials.awsSecretKey)
-                )
-            }
         }
 
         private fun load(

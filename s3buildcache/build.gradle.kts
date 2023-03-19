@@ -27,8 +27,13 @@ dependencies {
     implementation(platform(libs.amazon.bom))
     implementation(libs.amazon.s3)
     implementation(libs.amazon.sso)
-    // This has to be on the classpath to be able to read credentials. See: https://github.com/aws/aws-sdk-java/issues/1324
-    runtimeOnly(libs.amazon.sts)
+    runtimeOnly(libs.amazon.sts) {
+        because("Has to be on the classpath to be able to read credentials. See: https://github.com/aws/aws-sdk-java/issues/1324")
+    }
+    testImplementation(libs.adobe.s3.mock) {
+        // Classpath collisions
+        exclude("ch.qos.logback", "logback-classic")
+    }
 }
 
 pluginBundle {
