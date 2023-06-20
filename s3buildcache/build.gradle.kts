@@ -24,29 +24,36 @@ plugins {
 
 dependencies {
     implementation(project(":core"))
-    implementation(libs.google.cloud.storage)
+    implementation(platform(libs.amazon.bom))
+    implementation(libs.amazon.s3)
+    implementation(libs.amazon.sso)
+    runtimeOnly(libs.amazon.sts) {
+        because("Has to be on the classpath to be able to read credentials. See: https://github.com/aws/aws-sdk-java/issues/1324")
+    }
+    testImplementation(libs.adobe.s3.mock) {
+        // Classpath collisions
+        exclude("ch.qos.logback", "logback-classic")
+    }
 }
 
 pluginBundle {
     website = "https://github.com/androidx/gcp-gradle-build-cache"
     vcsUrl = "https://github.com/androidx/gcp-gradle-build-cache"
-    tags = listOf("buildcache", "gcp", "caching")
+    tags = listOf("buildcache", "s3", "caching")
 }
 
 gradlePlugin {
     plugins {
-        create("gcpbuildcache") {
-            id = "androidx.build.gradle.gcpbuildcache"
-            displayName = "Gradle GCP Build Cache Plugin"
-            description = """
-                - Warn when a user incorrectly configures GCP bucket to be used for the cache.
-            """.trimIndent()
-            implementationClass = "androidx.build.gradle.gcpbuildcache.GcpGradleBuildCachePlugin"
+        create("s3buildcache") {
+            id = "androidx.build.gradle.s3buildcache"
+            displayName = "Gradle AWS S3 Build Cache Plugin"
+            description = "Gradle remote build cache backed by AWS S3"
+            implementationClass = "androidx.build.gradle.s3buildcache.S3GradleBuildCachePlugin"
         }
     }
 }
 
-group = "androidx.build.gradle.gcpbuildcache"
+group = "androidx.build.gradle.s3buildcache"
 version = "1.0.0-beta01"
 
 testing {

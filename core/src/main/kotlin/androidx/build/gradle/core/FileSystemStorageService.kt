@@ -15,7 +15,7 @@
  *
  */
 
-package androidx.build.gradle.gcpbuildcache
+package androidx.build.gradle.core
 
 import java.io.File
 import java.io.InputStream
@@ -24,14 +24,13 @@ import java.nio.file.Files
 /**
  * An implementation of the [StorageService] that is backed by a file system.
  */
-internal class FileSystemStorageService(
-    override val projectId: String,
+class FileSystemStorageService(
     override val bucketName: String,
     override val isPush: Boolean,
     override val isEnabled: Boolean
 ) : StorageService {
 
-    private val location = Files.createTempDirectory("tmp$projectId$bucketName").toFile()
+    private val location = Files.createTempDirectory("tmp$bucketName").toFile()
 
     override fun load(cacheKey: String): InputStream? {
         if (!isEnabled) {

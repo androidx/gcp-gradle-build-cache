@@ -15,23 +15,22 @@
  *
  */
 
-package androidx.build.gradle.gcpbuildcache
+plugins {
+    alias(libs.plugins.kotlin.jvm)
+}
 
-import androidx.build.gradle.core.RemoteGradleBuildCache
+dependencies {
+    implementation(gradleApi())
+    api(platform(libs.kotlin.bom))
+    api(libs.kotlin.stdlib)
+}
 
-/**
- * Gradle Build Cache that uses GCP buckets as a backing for load and store
- * Gradle results.
- */
-abstract class GcpBuildCache : RemoteGradleBuildCache() {
-
-    /**
-     * The Google Cloud Platform project id, that can be used for billing.
-     */
-    lateinit var projectId: String
-
-    /**
-     * The type of credentials to use to connect to the Google Cloud Platform project instance.
-     */
-    override var credentials: GcpCredentials = ApplicationDefaultGcpCredentials
+testing {
+    suites {
+        // Configure the built-in test suite
+        val test by getting(JvmTestSuite::class) {
+            // Use Kotlin Test Framework
+            useKotlinTest()
+        }
+    }
 }

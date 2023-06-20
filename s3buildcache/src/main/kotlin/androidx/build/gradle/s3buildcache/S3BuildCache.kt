@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 The Android Open Source Project
+ * Copyright 2023 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,23 +15,28 @@
  *
  */
 
-package androidx.build.gradle.gcpbuildcache
+package androidx.build.gradle.s3buildcache
 
 import androidx.build.gradle.core.RemoteGradleBuildCache
 
 /**
- * Gradle Build Cache that uses GCP buckets as a backing for load and store
- * Gradle results.
+ * Gradle Build Cache that uses AWS S3 buckets as a backing for load and store Gradle results.
  */
-abstract class GcpBuildCache : RemoteGradleBuildCache() {
+abstract class S3BuildCache : RemoteGradleBuildCache() {
 
     /**
-     * The Google Cloud Platform project id, that can be used for billing.
+     * The AWS region the S3 bucket is located in.
      */
-    lateinit var projectId: String
+    lateinit var region: String
 
     /**
-     * The type of credentials to use to connect to the Google Cloud Platform project instance.
+     * Whether to use reduced redundancy.
+     * @see <a href="https://aws.amazon.com/s3/reduced-redundancy/">Reduced Redundancy</a>
+     * */
+    var reducedRedundancy: Boolean = true
+
+    /**
+     * The type of credentials to use to connect to AWS.
      */
-    override var credentials: GcpCredentials = ApplicationDefaultGcpCredentials
+    override var credentials: S3Credentials = DefaultS3Credentials
 }

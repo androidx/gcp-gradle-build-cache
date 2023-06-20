@@ -17,13 +17,14 @@
 
 package androidx.build.gradle.gcpbuildcache
 
+import androidx.build.gradle.core.Credentials
 import java.io.File
 
 /**
  * [ApplicationDefaultGcpCredentials] or [ExportedKeyGcpCredentials] to use
  * to authenticate to Google Cloud Platform.
  */
-sealed interface GcpCredentials
+sealed interface GcpCredentials : Credentials
 
 /**
  * Use Application Default to authenticate to Google Cloud Platform.

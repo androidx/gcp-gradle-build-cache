@@ -15,7 +15,7 @@
  *
  */
 
-package androidx.build.gradle.gcpbuildcache
+package androidx.build.gradle.core
 
 import org.junit.Test
 
@@ -23,7 +23,6 @@ class FileStorageServiceTest {
     @Test
     fun testStoreBlob() {
         val storageService = FileSystemStorageService(
-            projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
             isPush = true,
             isEnabled = true
@@ -39,7 +38,6 @@ class FileStorageServiceTest {
     @Test
     fun testLoadBlob() {
         val storageService = FileSystemStorageService(
-            projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
             isPush = true,
             isEnabled = true
@@ -58,7 +56,6 @@ class FileStorageServiceTest {
     @Test
     fun testStoreBlob_noPushSupport() {
         val storageService = FileSystemStorageService(
-            projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
             isPush = false,
             isEnabled = true
@@ -74,7 +71,6 @@ class FileStorageServiceTest {
     @Test
     fun testStoreBlob_disabled() {
         val storageService = FileSystemStorageService(
-            projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
             isPush = true,
             isEnabled = false
@@ -88,10 +84,6 @@ class FileStorageServiceTest {
     }
 
     companion object {
-        // Project ID
-        private const val PROJECT_ID = "androidx"
-
-        // The Bucket Name
         private const val BUCKET_NAME = "cache"
     }
 }

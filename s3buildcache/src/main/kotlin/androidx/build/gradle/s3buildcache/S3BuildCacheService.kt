@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 The Android Open Source Project
+ * Copyright 2023 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  *
  */
 
-package androidx.build.gradle.gcpbuildcache
+package androidx.build.gradle.s3buildcache
 
 import androidx.build.gradle.core.FileSystemStorageService
 import androidx.build.gradle.core.blobKey
@@ -24,34 +24,40 @@ import org.gradle.caching.BuildCacheEntryReader
 import org.gradle.caching.BuildCacheEntryWriter
 import org.gradle.caching.BuildCacheKey
 import org.gradle.caching.BuildCacheService
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.s3.S3Client
 import java.io.ByteArrayOutputStream
 
 /**
  * The service that responds to Gradle's request to load and store results for a given
  * [BuildCacheKey].
  *
- * @param projectId The Google Cloud Platform project id, that can be used for billing.
+ * @param region The AWS region the S3 bucket is located in.
  * @param bucketName The name of the bucket that is used to store all the gradle cache entries.
+ * @param reducedRedundancy Whether to use reduced redundancy.
  * This essentially becomes the root of all cache entries.
  */
-internal class GcpBuildCacheService(
-    private val projectId: String,
-    private val bucketName: String,
-    gcpCredentials: GcpCredentials,
+class S3BuildCacheService(
+    credentials: S3Credentials,
+    region: String,
+    bucketName: String,
     isPush: Boolean,
     isEnabled: Boolean,
+    reducedRedundancy: Boolean,
     inTestMode: Boolean = false
 ) : BuildCacheService {
 
+    private val client by lazy {
+        clientOptions(credentials(credentials), region)
+    }
     private val storageService = if (inTestMode) {
-        // Use an implementation backed by the File System when in test mode.
         FileSystemStorageService(bucketName, isPush, isEnabled)
     } else {
-        GcpStorageService(projectId, bucketName, gcpCredentials, isPush, isEnabled)
-    }
-
-    override fun close() {
-        // Does nothing
+        S3StorageService(bucketName, isPush, isEnabled, client, region, reducedRedundancy)
     }
 
     override fun load(key: BuildCacheKey, reader: BuildCacheEntryReader): Boolean {
@@ -72,6 +78,10 @@ internal class GcpBuildCacheService(
         storageService.store(cacheKey, output.toByteArray())
     }
 
+    override fun close() {
+        storageService.close()
+    }
+
     fun validateConfiguration() {
         storageService.validateConfiguration()
     }
@@ -79,7 +89,24 @@ internal class GcpBuildCacheService(
     companion object {
 
         private val logger by lazy {
-            Logging.getLogger("GcpBuildCacheService")
+            Logging.getLogger("AwsS3BuildCacheService")
+        }
+
+        private fun clientOptions(credentials: AwsCredentialsProvider, region: String): S3Client {
+            return S3Client.builder()
+                .credentialsProvider(credentials)
+                .region(Region.of(region))
+                .build()
+        }
+
+        private fun credentials(s3Credentials: S3Credentials): AwsCredentialsProvider {
+            return when (s3Credentials) {
+                DefaultS3Credentials -> DefaultCredentialsProvider.create()
+                is SpecificCredentialsProvider -> s3Credentials.provider
+                is ExportedS3Credentials -> StaticCredentialsProvider.create(
+                    AwsBasicCredentials.create(s3Credentials.awsAccessKeyId, s3Credentials.awsSecretKey)
+                )
+            }
         }
     }
 }

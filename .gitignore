@@ -13,6 +13,8 @@ build
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+.idea/aws.xml
+.idea/kotlinc.xml
 
 # Generated files
 .idea/**/contentModel.xml
@@ -53,3 +55,6 @@ out/
 # Cache file creation bug
 # See https://youtrack.jetbrains.com/issue/JBR-2257
 .idea/$CACHE_FILE$
+
+# MacOS directory information
+**/.DS_Store
