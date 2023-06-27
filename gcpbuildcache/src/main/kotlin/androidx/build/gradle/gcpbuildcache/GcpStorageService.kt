@@ -174,16 +174,36 @@ internal class GcpStorageService(
             }
             return when (gcpCredentials) {
                 is ApplicationDefaultGcpCredentials -> {
-                    GoogleCredentials.getApplicationDefault().createScoped(scopes)
+                    val credentials = GoogleCredentials.getApplicationDefault().createScoped(scopes)
+                    try {
+                        credentials.refreshAccessToken()
+                    } catch (e: Exception) {
+                        throw Exception("""
+                            "Your GCP Credentials have expired.
+                            Please regenerate credentials and try again.
+                            """.trimIndent()
+                        )
+                    }
+                    credentials
                 }
                 is ExportedKeyGcpCredentials -> {
                     val contents = gcpCredentials.credentials.invoke()
                     if (contents.isBlank()) throw GradleException("Credentials are empty.")
                     // Use the underlying transport factory to ensure logging is disabled.
-                    GoogleCredentials.fromStream(
+                    val credentials = GoogleCredentials.fromStream(
                         contents.byteInputStream(charset = Charsets.UTF_8),
                         transportOptions.httpTransportFactory
                     ).createScoped(scopes)
+                    try {
+                        credentials.refreshAccessToken()
+                    } catch (e: Exception) {
+                        throw GradleException("""
+                            "Your GCP Credentials have expired.
+                            Please regenerate credentials and try again.
+                            """.trimIndent()
+                        )
+                    }
+                    credentials
                 }
             }
         }
