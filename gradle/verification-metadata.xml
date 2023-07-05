@@ -166,7 +166,11 @@
          <trusted-key id="feb9209f2f2f3f4664841e55ac107b386692dadd" group="^software[.]amazon($|([.].*))" regex="true"/>
          <trusted-key id="ff6e2c001948c5f2f38b0cc385911f425ec61b51">
             <trusting group="junit"/>
+            <trusting group="org.apiguardian"/>
             <trusting group="org.junit"/>
+            <trusting group="org.junit.jupiter"/>
+            <trusting group="org.junit.platform"/>
+            <trusting group="org.opentest4j"/>
          </trusted-key>
          <trusted-key id="ffa95b1dd22fe6d191189afa718e28a09e67016b" group="jakarta.websocket"/>
       </trusted-keys>

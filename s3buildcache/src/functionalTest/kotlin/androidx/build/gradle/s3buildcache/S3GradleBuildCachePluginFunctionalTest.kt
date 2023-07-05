@@ -19,8 +19,8 @@ package androidx.build.gradle.s3buildcache
 
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
+import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import kotlin.test.Test
 
 /**
  * A simple functional test for the 'androidx.build.gradle.s3buildcache.S3BuildCache' plugin.
