@@ -15,7 +15,7 @@
  *
  */
 
-package androidx.build.gradle.gcpbuildcache
+package androidx.build.gradle.core
 
 import java.io.File
 import java.io.InputStream
@@ -26,7 +26,7 @@ import java.nio.file.Path
  * An input stream that keeps track of the file handles, so they can be cleaned up when the
  * [FileHandleInputStream] is closed.
  */
-internal class FileHandleInputStream(private val file: File) : InputStream() {
+class FileHandleInputStream(private val file: File) : InputStream() {
     private val inputStream by lazy {
         file.inputStream()
     }

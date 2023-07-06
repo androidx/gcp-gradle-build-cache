@@ -17,7 +17,9 @@
 
 package androidx.build.gradle.gcpbuildcache
 
-import androidx.build.gradle.gcpbuildcache.FileHandleInputStream.Companion.handleInputStream
+import androidx.build.gradle.core.FileHandleInputStream
+import androidx.build.gradle.core.FileHandleInputStream.Companion.handleInputStream
+import androidx.build.gradle.core.StorageService
 import com.google.api.gax.retrying.RetrySettings
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.http.HttpTransportOptions
@@ -30,7 +32,7 @@ import java.io.InputStream
  * An implementation of the [StorageService] that is backed by Google Cloud Storage.
  */
 internal class GcpStorageService(
-    override val projectId: String,
+    private val projectId: String,
     override val bucketName: String,
     gcpCredentials: GcpCredentials,
     override val isPush: Boolean,
@@ -76,7 +78,7 @@ internal class GcpStorageService(
             return false
         }
         val blobId = BlobId.of(bucketName, cacheKey)
-        return Companion.delete(storageOptions, blobId)
+        return delete(storageOptions, blobId)
     }
 
     override fun validateConfiguration() {

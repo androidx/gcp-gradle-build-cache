@@ -25,12 +25,21 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 
-rootProject.name = "gcp-gradle-build-cache"
-include("gcpbuildcache")
-
 pluginManagement {
     repositories {
         mavenCentral()
         gradlePluginPortal()
     }
 }
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+    }
+}
+
+rootProject.name = "gcp-gradle-build-cache"
+include("core")
+include("gcpbuildcache")
+include("s3buildcache")

@@ -15,17 +15,12 @@
  *
  */
 
-package androidx.build.gradle.gcpbuildcache
+package androidx.build.gradle.core
 
 import java.io.Closeable
 import java.io.InputStream
 
 interface StorageService : Closeable {
-    /**
-     * The name of the project.
-     */
-    val projectId: String
-
     /**
      * The name of the root bucket where the cache is going to be stored.
      */
