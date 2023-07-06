@@ -36,19 +36,16 @@ dependencies {
     }
 }
 
-pluginBundle {
-    website = "https://github.com/androidx/gcp-gradle-build-cache"
-    vcsUrl = "https://github.com/androidx/gcp-gradle-build-cache"
-    tags = listOf("buildcache", "s3", "caching")
-}
-
 gradlePlugin {
+    website.set("https://github.com/androidx/gcp-gradle-build-cache")
+    vcsUrl.set("https://github.com/androidx/gcp-gradle-build-cache")
     plugins {
         create("s3buildcache") {
             id = "androidx.build.gradle.s3buildcache"
             displayName = "Gradle AWS S3 Build Cache Plugin"
             description = "Gradle remote build cache backed by AWS S3"
             implementationClass = "androidx.build.gradle.s3buildcache.S3GradleBuildCachePlugin"
+            tags.set(listOf("buildcache", "s3", "caching"))
         }
     }
 }
@@ -60,18 +57,16 @@ testing {
     suites {
         // Configure the built-in test suite
         val test by getting(JvmTestSuite::class) {
-            // Use Kotlin Test Framework
-            useKotlinTest()
+            useJUnit()
         }
 
         // Create a new test suite
         val functionalTest by registering(JvmTestSuite::class) {
-            // Use Kotlin Test Framework
-            useKotlinTest()
+            useJUnit()
 
             dependencies {
                 // functionalTest test suite depends on the production code in tests
-                implementation(project)
+                implementation(project())
             }
 
             targets {

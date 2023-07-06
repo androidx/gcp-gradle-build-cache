@@ -27,13 +27,9 @@ dependencies {
     implementation(libs.google.cloud.storage)
 }
 
-pluginBundle {
-    website = "https://github.com/androidx/gcp-gradle-build-cache"
-    vcsUrl = "https://github.com/androidx/gcp-gradle-build-cache"
-    tags = listOf("buildcache", "gcp", "caching")
-}
-
 gradlePlugin {
+    website.set("https://github.com/androidx/gcp-gradle-build-cache")
+    vcsUrl.set("https://github.com/androidx/gcp-gradle-build-cache")
     plugins {
         create("gcpbuildcache") {
             id = "androidx.build.gradle.gcpbuildcache"
@@ -42,6 +38,7 @@ gradlePlugin {
                 - Warn when a user incorrectly configures GCP bucket to be used for the cache.
             """.trimIndent()
             implementationClass = "androidx.build.gradle.gcpbuildcache.GcpGradleBuildCachePlugin"
+            tags.set(listOf("buildcache", "gcp", "caching"))
         }
     }
 }
@@ -53,18 +50,16 @@ testing {
     suites {
         // Configure the built-in test suite
         val test by getting(JvmTestSuite::class) {
-            // Use Kotlin Test Framework
-            useKotlinTest()
+            useJUnit()
         }
 
         // Create a new test suite
         val functionalTest by registering(JvmTestSuite::class) {
-            // Use Kotlin Test Framework
-            useKotlinTest()
+            useJUnit()
 
             dependencies {
                 // functionalTest test suite depends on the production code in tests
-                implementation(project)
+                implementation(project())
             }
 
             targets {
