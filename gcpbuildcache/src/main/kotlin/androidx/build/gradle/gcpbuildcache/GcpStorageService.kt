@@ -178,7 +178,11 @@ internal class GcpStorageService(
                 is ApplicationDefaultGcpCredentials -> {
                     val credentials = GoogleCredentials.getApplicationDefault().createScoped(scopes)
                     try {
-                        credentials.refreshAccessToken()
+                        // If the credentials have expired,
+                        // reauth is required by the user to be able to generate or refresh access token;
+                        // Refreshing the access token here helps us to provide a useful error message to the user
+                        // in case the credentials have expired
+                        credentials.refreshIfExpired()
                     } catch (e: Exception) {
                         throw Exception("""
                             "Your GCP Credentials have expired.
@@ -197,7 +201,11 @@ internal class GcpStorageService(
                         transportOptions.httpTransportFactory
                     ).createScoped(scopes)
                     try {
-                        credentials.refreshAccessToken()
+                        // If the credentials have expired,
+                        // reauth is required by the user to be able to generate or refresh access token;
+                        // Refreshing the access token here helps us to provide a useful error message to the user
+                        // in case the credentials have expired
+                        credentials.refreshIfExpired()
                     } catch (e: Exception) {
                         throw GradleException("""
                             "Your GCP Credentials have expired.
