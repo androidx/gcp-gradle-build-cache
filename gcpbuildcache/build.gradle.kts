@@ -25,6 +25,8 @@ plugins {
 dependencies {
     implementation(project(":core"))
     implementation(libs.google.cloud.storage)
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.gson)
 }
 
 gradlePlugin {
