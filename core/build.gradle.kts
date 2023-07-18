@@ -23,6 +23,8 @@ dependencies {
     implementation(gradleApi())
     api(platform(libs.kotlin.bom))
     api(libs.kotlin.stdlib)
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.gson)
 }
 
 testing {

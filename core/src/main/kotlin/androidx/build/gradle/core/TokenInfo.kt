@@ -15,7 +15,7 @@
  *
  */
 
-package androidx.build.gradle.gcpbuildcache
+package androidx.build.gradle.core
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -33,7 +33,7 @@ internal fun gson(config: GsonBuilder.() -> Unit = {}): Gson {
 }
 interface TokenInfoService {
     @GET("/oauth2/v1/tokeninfo")
-    fun tokenInfo(@Query("access_token") accessToken: String): Call<Any>
+    fun tokenInfo(@Query("access_token") accessToken: String): Call<Unit>
 
     companion object {
         fun tokenService(): TokenInfoService {

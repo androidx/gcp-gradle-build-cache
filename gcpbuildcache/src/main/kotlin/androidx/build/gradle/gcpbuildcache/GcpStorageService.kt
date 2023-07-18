@@ -20,9 +20,7 @@ package androidx.build.gradle.gcpbuildcache
 import androidx.build.gradle.core.FileHandleInputStream
 import androidx.build.gradle.core.FileHandleInputStream.Companion.handleInputStream
 import androidx.build.gradle.core.StorageService
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
-import com.google.api.client.json.gson.GsonFactory
+import androidx.build.gradle.core.TokenInfoService
 import com.google.api.gax.retrying.RetrySettings
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.http.HttpTransportOptions
@@ -30,9 +28,6 @@ import com.google.cloud.storage.*
 import org.gradle.api.GradleException
 import org.gradle.api.logging.Logging
 import java.io.InputStream
-import java.net.URL
-import java.util.*
-
 
 /**
  * An implementation of the [StorageService] that is backed by Google Cloud Storage.
@@ -230,7 +225,6 @@ internal class GcpStorageService(
                         throw GradleException(tokenInfoResponse.errorBody().toString())
                     }
                     credentials
-
                 }
             }
         }
