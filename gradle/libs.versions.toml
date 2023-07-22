@@ -4,6 +4,7 @@ kotlin = "1.7.10"
 amazon-bom = "2.20.18"
 google-cloud-storage = "2.9.3"
 s3-mock = "2.11.0"
+retrofit = "2.9.0"
 
 [libraries]
 kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
@@ -14,6 +15,8 @@ amazon-sso = { group = "software.amazon.awssdk", name = "sso", version.ref = "am
 amazon-sts = { group = "software.amazon.awssdk", name = "sts", version.ref = "amazon-bom" }
 adobe-s3-mock = { group = "com.adobe.testing", name = "s3mock", version.ref = "s3-mock" }
 google-cloud-storage = { group = "com.google.cloud", name = "google-cloud-storage", version.ref = "google-cloud-storage" }
+retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

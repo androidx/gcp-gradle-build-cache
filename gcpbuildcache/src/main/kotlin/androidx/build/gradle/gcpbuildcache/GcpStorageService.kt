@@ -20,6 +20,7 @@ package androidx.build.gradle.gcpbuildcache
 import androidx.build.gradle.core.FileHandleInputStream
 import androidx.build.gradle.core.FileHandleInputStream.Companion.handleInputStream
 import androidx.build.gradle.core.StorageService
+import androidx.build.gradle.core.TokenInfoService
 import com.google.api.gax.retrying.RetrySettings
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.http.HttpTransportOptions
@@ -176,16 +177,54 @@ internal class GcpStorageService(
             }
             return when (gcpCredentials) {
                 is ApplicationDefaultGcpCredentials -> {
-                    GoogleCredentials.getApplicationDefault().createScoped(scopes)
+                    val credentials = GoogleCredentials.getApplicationDefault().createScoped(scopes)
+                    try {
+                        // If the credentials have expired,
+                        // reauth is required by the user to be able to generate or refresh access token;
+                        // Refreshing the access token here helps us to provide a useful error message to the user
+                        // in case the credentials have expired
+                        credentials.refreshIfExpired()
+                    } catch (e: Exception) {
+                        throw Exception("""
+                            "Your GCP Credentials have expired.
+                            Please regenerate credentials and try again.
+                            """.trimIndent()
+                        )
+                    }
+                    val tokenService = TokenInfoService.tokenService()
+                    val tokenInfoResponse = tokenService.tokenInfo(credentials.accessToken.tokenValue).execute()
+                    if(!tokenInfoResponse.isSuccessful) {
+                        throw GradleException(tokenInfoResponse.errorBody().toString())
+                    }
+                    credentials
                 }
                 is ExportedKeyGcpCredentials -> {
                     val contents = gcpCredentials.credentials.invoke()
                     if (contents.isBlank()) throw GradleException("Credentials are empty.")
                     // Use the underlying transport factory to ensure logging is disabled.
-                    GoogleCredentials.fromStream(
+                    val credentials = GoogleCredentials.fromStream(
                         contents.byteInputStream(charset = Charsets.UTF_8),
                         transportOptions.httpTransportFactory
                     ).createScoped(scopes)
+                    try {
+                        // If the credentials have expired,
+                        // reauth is required by the user to be able to generate or refresh access token;
+                        // Refreshing the access token here helps us to provide a useful error message to the user
+                        // in case the credentials have expired
+                        credentials.refreshIfExpired()
+                    } catch (e: Exception) {
+                        throw GradleException("""
+                            "Your GCP Credentials have expired.
+                            Please regenerate credentials and try again.
+                            """.trimIndent()
+                        )
+                    }
+                    val tokenService = TokenInfoService.tokenService()
+                    val tokenInfoResponse = tokenService.tokenInfo(credentials.accessToken.tokenValue).execute()
+                    if(!tokenInfoResponse.isSuccessful) {
+                        throw GradleException(tokenInfoResponse.errorBody().toString())
+                    }
+                    credentials
                 }
             }
         }
