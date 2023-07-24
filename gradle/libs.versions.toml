@@ -1,5 +1,5 @@
 [versions]
-gradle-publish = "1.0.0"
+gradle-publish = "1.1.0"
 kotlin = "1.7.10"
 amazon-bom = "2.20.18"
 google-cloud-storage = "2.9.3"
