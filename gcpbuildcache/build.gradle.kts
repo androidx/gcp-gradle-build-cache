@@ -28,8 +28,6 @@ sourceSets.main {
 }
 
 dependencies {
-    implementation(libs.retrofit.core)
-    implementation(libs.retrofit.converter.gson)
     implementation(libs.google.cloud.storage)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
