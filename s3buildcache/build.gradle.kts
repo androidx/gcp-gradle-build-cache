@@ -22,8 +22,14 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
 }
 
+// Bundle core library directly as we only get to publish one jar per plugin in Gradle Plugin Portal
+sourceSets.main {
+    java.srcDir("../core/src/main/kotlin")
+}
+
 dependencies {
-    implementation(project(":core"))
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.gson)
     implementation(platform(libs.amazon.bom))
     implementation(libs.amazon.s3)
     implementation(libs.amazon.sso)
@@ -51,7 +57,7 @@ gradlePlugin {
 }
 
 group = "androidx.build.gradle.s3buildcache"
-version = "1.0.0-alpha01"
+version = "1.0.0-alpha02"
 
 testing {
     suites {
