@@ -187,14 +187,22 @@ internal class GcpStorageService(
                     } catch (e: Exception) {
                         throw Exception("""
                             "Your GCP Credentials have expired.
-                            Please regenerate credentials and try again.
+                            Please regenerate credentials following the steps below and try again:
+                            gcloud auth application-default login --project androidx-ge
+                            ./gradlew --stop
                             """.trimIndent()
                         )
                     }
                     val tokenService = TokenInfoService.tokenService()
                     val tokenInfoResponse = tokenService.tokenInfo(credentials.accessToken.tokenValue).execute()
                     if(!tokenInfoResponse.isSuccessful) {
-                        throw GradleException(tokenInfoResponse.errorBody().toString())
+                        throw Exception("""
+                            "Your GCP Credentials have expired.
+                            Please regenerate credentials following the steps below and try again:
+                            gcloud auth application-default login --project androidx-ge
+                            ./gradlew --stop
+                            """.trimIndent()
+                        )
                     }
                     credentials
                 }
@@ -215,14 +223,22 @@ internal class GcpStorageService(
                     } catch (e: Exception) {
                         throw GradleException("""
                             "Your GCP Credentials have expired.
-                            Please regenerate credentials and try again.
+                            Please regenerate credentials following the steps below and try again:
+                            gcloud auth application-default login --project androidx-ge
+                            ./gradlew --stop
                             """.trimIndent()
                         )
                     }
                     val tokenService = TokenInfoService.tokenService()
                     val tokenInfoResponse = tokenService.tokenInfo(credentials.accessToken.tokenValue).execute()
                     if(!tokenInfoResponse.isSuccessful) {
-                        throw GradleException(tokenInfoResponse.errorBody().toString())
+                        throw GradleException("""
+                            "Your GCP Credentials have expired.
+                            Please regenerate credentials following the steps below and try again:
+                            gcloud auth application-default login --project androidx-ge
+                            ./gradlew --stop
+                            """.trimIndent()
+                        )
                     }
                     credentials
                 }
