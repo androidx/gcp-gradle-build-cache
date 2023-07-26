@@ -34,4 +34,8 @@ abstract class GcpBuildCache : RemoteGradleBuildCache() {
      * The type of credentials to use to connect to the Google Cloud Platform project instance.
      */
     override var credentials: GcpCredentials = ApplicationDefaultGcpCredentials
+
+    var messageOnAuthenticationFailure: String = """Your GCP Credentials have expired.
+        Please regenerate credentials following the steps below and try again:
+        gcloud auth application-default login""".trimIndent()
 }
