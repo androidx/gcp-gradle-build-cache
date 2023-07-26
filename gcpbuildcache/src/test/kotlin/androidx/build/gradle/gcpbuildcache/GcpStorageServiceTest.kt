@@ -34,6 +34,7 @@ class GcpStorageServiceTest {
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
+            messageOnAuthenticationFailure = "Please re-authenticate",
             isPush = true,
             isEnabled = true,
             sizeThreshold = 0L
@@ -54,6 +55,7 @@ class GcpStorageServiceTest {
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
+            messageOnAuthenticationFailure = "Please re-authenticate",
             isPush = true,
             isEnabled = true,
             sizeThreshold = 0L
@@ -77,6 +79,7 @@ class GcpStorageServiceTest {
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
+            messageOnAuthenticationFailure = "Please re-authenticate",
             isPush = false,
             isEnabled = true,
             sizeThreshold = 0L
@@ -96,6 +99,7 @@ class GcpStorageServiceTest {
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
+            messageOnAuthenticationFailure = "Please re-authenticate",
             isPush = true,
             isEnabled = true,
             sizeThreshold = 0L
@@ -104,6 +108,7 @@ class GcpStorageServiceTest {
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath)),
+            messageOnAuthenticationFailure = "Please re-authenticate",
             isPush = false,
             isEnabled = true,
             sizeThreshold = 0L
@@ -129,6 +134,7 @@ class GcpStorageServiceTest {
             projectId = PROJECT_ID,
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
+            messageOnAuthenticationFailure = "Please re-authenticate",
             isPush = true,
             isEnabled = false,
             sizeThreshold = 0L

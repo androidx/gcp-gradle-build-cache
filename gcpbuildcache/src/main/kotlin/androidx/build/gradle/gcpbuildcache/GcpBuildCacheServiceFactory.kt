@@ -43,6 +43,7 @@ class GcpBuildCacheServiceFactory : BuildCacheServiceFactory<GcpBuildCache> {
             buildCache.projectId,
             buildCache.bucketName,
             buildCache.credentials,
+            buildCache.messageOnAuthenticationFailure,
             buildCache.isPush,
             buildCache.isEnabled
         )

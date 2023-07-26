@@ -36,12 +36,15 @@ internal class GcpStorageService(
     private val projectId: String,
     override val bucketName: String,
     gcpCredentials: GcpCredentials,
+    messageOnAuthenticationFailure: String,
     override val isPush: Boolean,
     override val isEnabled: Boolean,
     private val sizeThreshold: Long = BLOB_SIZE_THRESHOLD
 ) : StorageService {
 
-    private val storageOptions by lazy { storageOptions(projectId, gcpCredentials, isPush) }
+    private val storageOptions by lazy {
+        storageOptions(projectId, gcpCredentials, messageOnAuthenticationFailure, isPush)
+    }
 
     override fun load(cacheKey: String): InputStream? {
         if (!isEnabled) {
@@ -153,9 +156,14 @@ internal class GcpStorageService(
         private fun storageOptions(
             projectId: String,
             gcpCredentials: GcpCredentials,
+            messageOnAuthenticationFailure: String,
             isPushSupported: Boolean
         ): StorageOptions? {
-            val credentials = credentials(gcpCredentials, isPushSupported) ?: return null
+            val credentials = credentials(
+                gcpCredentials,
+                messageOnAuthenticationFailure,
+                isPushSupported
+            ) ?: return null
             val retrySettings = RetrySettings.newBuilder()
             retrySettings.maxAttempts = 3
             return StorageOptions.newBuilder().setCredentials(credentials)
@@ -165,8 +173,66 @@ internal class GcpStorageService(
                 .build()
         }
 
+        /**
+         * Attempts to use reflection to clear the cached credentials inside the Google authentication library.
+         */
+        private fun clearCachedDefaultCredentials() {
+            try {
+                val field = GoogleCredentials::class.java.getDeclaredField("defaultCredentialsProvider")
+                field.isAccessible = true
+                val defaultCredentialsProvider = field.get(null)
+                val cachedCredentials = field.type.getDeclaredField("cachedCredentials")
+                cachedCredentials.isAccessible = true
+                cachedCredentials.set(defaultCredentialsProvider, null)
+            } catch (exception: Exception) {
+                // unable to clear the credentials, oh well.
+            }
+        }
+
+        private fun defaultApplicationGcpCredentials(
+            scopes: List<String>,
+            messageOnAuthenticationFailure: String,
+            forceClearCache: Boolean
+        ): GoogleCredentials {
+            if (forceClearCache) clearCachedDefaultCredentials()
+            val credentials = GoogleCredentials.getApplicationDefault().createScoped(scopes)
+
+            try {
+                // If the credentials have expired,
+                // reauth is required by the user to be able to generate or refresh access token;
+                // Refreshing the access token here helps us to provide a useful error message to the user
+                // in case the credentials have expired
+                credentials.refreshIfExpired()
+            } catch (e: Exception) {
+                if (forceClearCache) {
+                    throw Exception(messageOnAuthenticationFailure)
+                } else {
+                    return defaultApplicationGcpCredentials(
+                        scopes,
+                        messageOnAuthenticationFailure,
+                        forceClearCache = true
+                    )
+                }
+            }
+            val tokenService = TokenInfoService.tokenService()
+            val tokenInfoResponse = tokenService.tokenInfo(credentials.accessToken.tokenValue).execute()
+            if (!tokenInfoResponse.isSuccessful) {
+                if (forceClearCache) {
+                    throw Exception(messageOnAuthenticationFailure)
+                } else {
+                    return defaultApplicationGcpCredentials(
+                        scopes,
+                        messageOnAuthenticationFailure,
+                        forceClearCache = true
+                    )
+                }
+            }
+            return credentials
+        }
+
         private fun credentials(
             gcpCredentials: GcpCredentials,
+            messageOnAuthenticationFailure: String,
             isPushSupported: Boolean
         ): GoogleCredentials? {
             val scopes = mutableListOf(
@@ -177,26 +243,7 @@ internal class GcpStorageService(
             }
             return when (gcpCredentials) {
                 is ApplicationDefaultGcpCredentials -> {
-                    val credentials = GoogleCredentials.getApplicationDefault().createScoped(scopes)
-                    try {
-                        // If the credentials have expired,
-                        // reauth is required by the user to be able to generate or refresh access token;
-                        // Refreshing the access token here helps us to provide a useful error message to the user
-                        // in case the credentials have expired
-                        credentials.refreshIfExpired()
-                    } catch (e: Exception) {
-                        throw Exception("""
-                            "Your GCP Credentials have expired.
-                            Please regenerate credentials and try again.
-                            """.trimIndent()
-                        )
-                    }
-                    val tokenService = TokenInfoService.tokenService()
-                    val tokenInfoResponse = tokenService.tokenInfo(credentials.accessToken.tokenValue).execute()
-                    if(!tokenInfoResponse.isSuccessful) {
-                        throw GradleException(tokenInfoResponse.errorBody().toString())
-                    }
-                    credentials
+                    defaultApplicationGcpCredentials(scopes, messageOnAuthenticationFailure, forceClearCache = false)
                 }
                 is ExportedKeyGcpCredentials -> {
                     val contents = gcpCredentials.credentials.invoke()
