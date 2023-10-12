@@ -64,6 +64,7 @@ internal class GcpBuildCacheService(
     }
 
     override fun store(key: BuildCacheKey, writer: BuildCacheEntryWriter) {
+        if (writer.size == 0L) return // do not store empty entries into the cache
         logger.info("Storing ${key.blobKey()}")
         val cacheKey = key.blobKey()
         val output = ByteArrayOutputStream()
