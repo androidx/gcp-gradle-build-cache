@@ -50,7 +50,7 @@ gradlePlugin {
 }
 
 group = "androidx.build.gradle.gcpbuildcache"
-version = "1.0.0-beta04"
+version = "1.0.0-beta05"
 
 testing {
     suites {
