@@ -43,15 +43,15 @@ dependencies {
 }
 
 gradlePlugin {
-    website.set("https://github.com/androidx/gcp-gradle-build-cache")
-    vcsUrl.set("https://github.com/androidx/gcp-gradle-build-cache")
+    website = "https://github.com/androidx/gcp-gradle-build-cache"
+    vcsUrl = "https://github.com/androidx/gcp-gradle-build-cache"
     plugins {
         create("s3buildcache") {
             id = "androidx.build.gradle.s3buildcache"
             displayName = "Gradle AWS S3 Build Cache Plugin"
             description = "Gradle remote build cache backed by AWS S3"
             implementationClass = "androidx.build.gradle.s3buildcache.S3GradleBuildCachePlugin"
-            tags.set(listOf("buildcache", "s3", "caching"))
+            tags = listOf("buildcache", "s3", "caching")
         }
     }
 }
