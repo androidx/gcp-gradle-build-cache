@@ -57,7 +57,6 @@ internal class GcpStorageService(
     }
 
     override fun store(cacheKey: String, contents: ByteArray): Boolean {
-
         if (!isEnabled) {
             logger.info("Not Enabled")
             return false
@@ -123,7 +122,10 @@ internal class GcpStorageService(
             if (storage == null) return null
             return try {
                 val blob = storage.service.get(blobId) ?: return null
-                return if (blob.size > sizeThreshold) {
+                return if (blob.size == 0L) {
+                    // return empty entries as a cache miss
+                    null
+                } else if (blob.size > sizeThreshold) {
                     val path = FileHandleInputStream.create()
                     blob.downloadTo(path)
                     path.handleInputStream()
