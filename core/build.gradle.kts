@@ -31,7 +31,6 @@ dependencies {
 testing {
     suites {
         // Configure the built-in test suite
-        @Suppress("UnstableApiUsage")
         val test by getting(JvmTestSuite::class) {
             useJUnit()
         }

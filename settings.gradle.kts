@@ -32,7 +32,6 @@ pluginManagement {
     }
 }
 
-@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
     repositories {
@@ -44,5 +43,4 @@ rootProject.name = "gcp-gradle-build-cache"
 include("core")
 include("gcpbuildcache")
 include("s3buildcache")
-
 includeBuild("buildlogic")

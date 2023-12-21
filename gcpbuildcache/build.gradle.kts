@@ -32,7 +32,6 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
 }
 
-@Suppress("UnstableApiUsage")
 gradlePlugin {
     website = "https://github.com/androidx/gcp-gradle-build-cache"
     vcsUrl = "https://github.com/androidx/gcp-gradle-build-cache"
@@ -52,7 +51,6 @@ gradlePlugin {
 group = "androidx.build.gradle.gcpbuildcache"
 version = "1.0.0-beta05"
 
-@Suppress("UnstableApiUsage")
 testing {
     suites {
         // Configure built-in test suite.
@@ -81,7 +79,6 @@ testing {
 
 gradlePlugin.testSourceSets(sourceSets["functionalTest"])
 
-@Suppress("UnstableApiUsage")
 tasks.named<Task>("check") {
     // Include functionalTest as part of the check lifecycle
     dependsOn(testing.suites.named("functionalTest"))
