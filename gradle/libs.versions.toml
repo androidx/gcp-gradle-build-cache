@@ -2,7 +2,7 @@
 gradle-publish = "1.1.0"
 kotlin = "1.9.22"
 amazon-bom = "2.20.18"
-google-cloud-storage = "2.9.3"
+google-cloud-storage = "2.30.1"
 s3-mock = "2.11.0"
 retrofit = "2.9.0"
 gson = "2.10.1"
