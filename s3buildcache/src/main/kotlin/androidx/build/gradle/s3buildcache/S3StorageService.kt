@@ -17,6 +17,8 @@
 
 package androidx.build.gradle.s3buildcache
 
+import androidx.build.gradle.core.FileHandleInputStream
+import androidx.build.gradle.core.FileHandleInputStream.Companion.handleInputStream
 import androidx.build.gradle.core.StorageService
 import org.gradle.api.logging.Logging
 import software.amazon.awssdk.core.sync.RequestBody
@@ -27,6 +29,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.model.StorageClass.REDUCED_REDUNDANCY
 import software.amazon.awssdk.services.s3.model.StorageClass.STANDARD
 import java.io.InputStream
+import kotlin.io.path.outputStream
 
 class S3StorageService(
     override val bucketName: String,
@@ -110,6 +113,7 @@ class S3StorageService(
     companion object {
 
         private const val BLOB_SIZE_THRESHOLD = 50 * 1024 * 1024L
+        private const val BUFFER_SIZE = 32 * 1024 * 1024
 
         private val logger by lazy {
             Logging.getLogger("AwsS3StorageService")
@@ -124,9 +128,16 @@ class S3StorageService(
                 val inputStream = client.getObject(request)
                 val blob = inputStream.response() ?: return null
                 if (blob.contentLength() > sizeThreshold) {
-                    logger.info("Cache item ${request.key()} size is ${blob.contentLength()} and it exceeds $sizeThreshold. Will skip loading")
-                    inputStream.abort()
-                    null
+                    val path = FileHandleInputStream.create()
+                    val outputStream = path.outputStream()
+                    outputStream.use {
+                        inputStream.use {
+                            inputStream.buffered(BUFFER_SIZE)
+                                .copyTo(outputStream)
+                        }
+                    }
+                    path.handleInputStream()
+                        .buffered(BUFFER_SIZE)
                 } else {
                     inputStream
                 }

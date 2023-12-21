@@ -28,6 +28,7 @@ dependencies {
     bundleInside(project(":core"))
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
+    implementation(libs.google.gson)
     implementation(platform(libs.amazon.bom))
     implementation(libs.amazon.s3)
     implementation(libs.amazon.sso)
@@ -59,12 +60,13 @@ version = "1.0.0-alpha02"
 
 testing {
     suites {
-        // Configure the built-in test suite
+        // Configure built-in test suite.
+
         val test by getting(JvmTestSuite::class) {
             useJUnit()
         }
 
-        // Create a new test suite
+        // Create a new functional test suite.
         val functionalTest by registering(JvmTestSuite::class) {
             useJUnit()
 
