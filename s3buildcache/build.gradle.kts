@@ -38,7 +38,6 @@ dependencies {
     testImplementation(libs.adobe.s3.mock) {
         // Classpath collisions
         exclude("ch.qos.logback", "logback-classic")
-        exclude("org.springframework.boot")
     }
 }
 

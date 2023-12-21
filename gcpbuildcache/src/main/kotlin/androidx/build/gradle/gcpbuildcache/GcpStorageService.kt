@@ -86,7 +86,8 @@ internal class GcpStorageService(
 
     override fun validateConfiguration() {
         if (storageOptions?.service?.get(bucketName, Storage.BucketGetOption.fields()) == null) {
-            throw Exception("""
+            throw Exception(
+                """
                 Bucket $bucketName under project $projectId cannot be found or it is not accessible using the provided
                 credentials.
                 """.trimIndent()
@@ -117,6 +118,7 @@ internal class GcpStorageService(
         private const val STORAGE_FULL_CONTROL = "https://www.googleapis.com/auth/devstorage.full_control"
 
         private const val BLOB_SIZE_THRESHOLD = 50 * 1024 * 1024L
+        private const val BUFFER_SIZE = 32 * 1024 * 1024
 
         private fun load(storage: StorageOptions?, blobId: BlobId, sizeThreshold: Long): InputStream? {
             if (storage == null) return null
@@ -128,9 +130,12 @@ internal class GcpStorageService(
                 } else if (blob.size > sizeThreshold) {
                     val path = FileHandleInputStream.create()
                     blob.downloadTo(path)
+                    // Always return a buffered stream
                     path.handleInputStream()
+                        .buffered(bufferSize = BUFFER_SIZE)
                 } else {
                     blob.getContent().inputStream()
+                        .buffered(bufferSize = BUFFER_SIZE)
                 }
             } catch (storageException: StorageException) {
                 logger.debug("Unable to load Blob ($blobId)", storageException)
@@ -247,6 +252,7 @@ internal class GcpStorageService(
                 is ApplicationDefaultGcpCredentials -> {
                     defaultApplicationGcpCredentials(scopes, messageOnAuthenticationFailure, forceClearCache = false)
                 }
+
                 is ExportedKeyGcpCredentials -> {
                     val contents = gcpCredentials.credentials.invoke()
                     if (contents.isBlank()) throw GradleException("Credentials are empty.")
@@ -262,7 +268,8 @@ internal class GcpStorageService(
                         // in case the credentials have expired
                         credentials.refreshIfExpired()
                     } catch (e: Exception) {
-                        throw GradleException("""
+                        throw GradleException(
+                            """
                             "Your GCP Credentials have expired.
                             Please regenerate credentials and try again.
                             """.trimIndent()
@@ -270,7 +277,7 @@ internal class GcpStorageService(
                     }
                     val tokenService = TokenInfoService.tokenService()
                     val tokenInfoResponse = tokenService.tokenInfo(credentials.accessToken.tokenValue).execute()
-                    if(!tokenInfoResponse.isSuccessful) {
+                    if (!tokenInfoResponse.isSuccessful) {
                         throw GradleException(tokenInfoResponse.errorBody().toString())
                     }
                     credentials

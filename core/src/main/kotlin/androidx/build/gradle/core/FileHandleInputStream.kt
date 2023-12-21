@@ -35,6 +35,26 @@ class FileHandleInputStream(private val file: File) : InputStream() {
         return inputStream.read()
     }
 
+    override fun read(byteArray: ByteArray): Int {
+        return inputStream.read(byteArray)
+    }
+
+    override fun read(byteArray: ByteArray, offset: Int, length: Int): Int {
+        return inputStream.read(byteArray, offset, length)
+    }
+
+    override fun readAllBytes(): ByteArray {
+        return inputStream.readAllBytes()
+    }
+
+    override fun readNBytes(length: Int): ByteArray {
+        return inputStream.readNBytes(length)
+    }
+
+    override fun readNBytes(byteArray: ByteArray, offset: Int, length: Int): Int {
+        return inputStream.readNBytes(byteArray, offset, length)
+    }
+
     override fun close() {
         super.close()
         try {
