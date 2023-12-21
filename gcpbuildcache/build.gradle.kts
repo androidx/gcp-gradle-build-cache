@@ -41,7 +41,8 @@ gradlePlugin {
             id = "androidx.build.gradle.gcpbuildcache"
             displayName = "Gradle GCP Build Cache Plugin"
             description = """
-                - Warn when a user incorrectly configures GCP bucket to be used for the cache.
+                - Performance optimization for pulling large remote cache entries, see
+                https://github.com/androidx/gcp-gradle-build-cache/pull/40
             """.trimIndent()
             implementationClass = "androidx.build.gradle.gcpbuildcache.GcpGradleBuildCachePlugin"
             tags = listOf("buildcache", "gcp", "caching")
@@ -50,7 +51,7 @@ gradlePlugin {
 }
 
 group = "androidx.build.gradle.gcpbuildcache"
-version = "1.0.0-beta05"
+version = "1.0.0-beta06"
 
 testing {
     suites {
