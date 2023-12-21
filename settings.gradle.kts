@@ -43,3 +43,5 @@ rootProject.name = "gcp-gradle-build-cache"
 include("core")
 include("gcpbuildcache")
 include("s3buildcache")
+
+includeBuild("buildlogic")

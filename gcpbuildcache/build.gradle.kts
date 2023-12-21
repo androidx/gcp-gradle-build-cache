@@ -18,16 +18,14 @@
 plugins {
     id("maven-publish")
     id("signing")
+    id("bundle")
     alias(libs.plugins.gradle.publish)
     alias(libs.plugins.kotlin.jvm)
 }
 
-// Bundle core library directly as we only get to publish one jar per plugin in Gradle Plugin Portal
-sourceSets.main {
-    java.srcDir("../core/src/main/kotlin")
-}
-
 dependencies {
+    // Bundle core library directly as we only get to publish one jar per plugin in Gradle Plugin Portal
+    bundleInside(project(":core"))
     implementation(libs.google.cloud.storage)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
