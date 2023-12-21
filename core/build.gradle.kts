@@ -25,11 +25,13 @@ dependencies {
     api(libs.kotlin.stdlib)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
+    implementation(libs.google.gson)
 }
 
 testing {
     suites {
         // Configure the built-in test suite
+        @Suppress("UnstableApiUsage")
         val test by getting(JvmTestSuite::class) {
             useJUnit()
         }

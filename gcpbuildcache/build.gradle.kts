@@ -27,10 +27,12 @@ dependencies {
     // Bundle core library directly as we only get to publish one jar per plugin in Gradle Plugin Portal
     bundleInside(project(":core"))
     implementation(libs.google.cloud.storage)
+    implementation(libs.google.protobuf.java)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
 }
 
+@Suppress("UnstableApiUsage")
 gradlePlugin {
     website = "https://github.com/androidx/gcp-gradle-build-cache"
     vcsUrl = "https://github.com/androidx/gcp-gradle-build-cache"
@@ -50,14 +52,15 @@ gradlePlugin {
 group = "androidx.build.gradle.gcpbuildcache"
 version = "1.0.0-beta05"
 
+@Suppress("UnstableApiUsage")
 testing {
     suites {
-        // Configure the built-in test suite
+        // Configure built-in test suite.
         val test by getting(JvmTestSuite::class) {
             useJUnit()
         }
 
-        // Create a new test suite
+        // Create a new functional test suite.
         val functionalTest by registering(JvmTestSuite::class) {
             useJUnit()
 
@@ -78,6 +81,7 @@ testing {
 
 gradlePlugin.testSourceSets(sourceSets["functionalTest"])
 
+@Suppress("UnstableApiUsage")
 tasks.named<Task>("check") {
     // Include functionalTest as part of the check lifecycle
     dependsOn(testing.suites.named("functionalTest"))

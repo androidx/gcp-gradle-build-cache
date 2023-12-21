@@ -28,6 +28,7 @@ dependencies {
     bundleInside(project(":core"))
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
+    implementation(libs.google.gson)
     implementation(platform(libs.amazon.bom))
     implementation(libs.amazon.s3)
     implementation(libs.amazon.sso)
@@ -37,9 +38,11 @@ dependencies {
     testImplementation(libs.adobe.s3.mock) {
         // Classpath collisions
         exclude("ch.qos.logback", "logback-classic")
+        exclude("org.springframework.boot")
     }
 }
 
+@Suppress("UnstableApiUsage")
 gradlePlugin {
     website = "https://github.com/androidx/gcp-gradle-build-cache"
     vcsUrl = "https://github.com/androidx/gcp-gradle-build-cache"
@@ -57,14 +60,16 @@ gradlePlugin {
 group = "androidx.build.gradle.s3buildcache"
 version = "1.0.0-alpha02"
 
+@Suppress("UnstableApiUsage")
 testing {
     suites {
-        // Configure the built-in test suite
+        // Configure built-in test suite.
+
         val test by getting(JvmTestSuite::class) {
             useJUnit()
         }
 
-        // Create a new test suite
+        // Create a new functional test suite.
         val functionalTest by registering(JvmTestSuite::class) {
             useJUnit()
 
@@ -85,6 +90,7 @@ testing {
 
 gradlePlugin.testSourceSets(sourceSets["functionalTest"])
 
+@Suppress("UnstableApiUsage")
 tasks.named<Task>("check") {
     // Include functionalTest as part of the check lifecycle
     dependsOn(testing.suites.named("functionalTest"))
