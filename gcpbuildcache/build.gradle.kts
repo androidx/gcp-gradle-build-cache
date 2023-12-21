@@ -30,6 +30,7 @@ dependencies {
     implementation(libs.google.protobuf.java)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
+    implementation(libs.google.gson)
 }
 
 gradlePlugin {
