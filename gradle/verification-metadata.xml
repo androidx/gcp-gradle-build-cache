@@ -150,6 +150,7 @@
          <trusted-key id="D022218DCC08AAD6EF3AF876B3DE72E647D35161" group="org.testcontainers"/>
          <trusted-key id="D33620F0D0864EC924483F6F3FF95B4331B1F3B7" group="org.testcontainers"/>
          <trusted-key id="D4C89EA4AAF455FD88B22087EFE8086F9E93774E" group="junit"/>
+         <trusted-key id="DBD744ACE7ADE6AA50DD591F66B50994442D2D40" group="^com[.]squareup($|([.].*))" regex="true"/>
          <trusted-key id="E113159331A1F87BFC2A93D0960D2E8635A91268" group="org.hdrhistogram"/>
          <trusted-key id="E2ACB037933CDEAAB7BF77D49A2C7A98E457C53D">
             <trusting group="io.micrometer"/>

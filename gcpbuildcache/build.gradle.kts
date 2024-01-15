@@ -26,11 +26,13 @@ plugins {
 dependencies {
     // Bundle core library directly as we only get to publish one jar per plugin in Gradle Plugin Portal
     bundleInside(project(":core"))
+    implementation(platform(libs.okhttp.bom))
     implementation(libs.google.cloud.storage)
     implementation(libs.google.protobuf.java)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.google.gson)
+    implementation(libs.okhttp)
 }
 
 gradlePlugin {
