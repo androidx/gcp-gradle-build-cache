@@ -26,10 +26,12 @@ plugins {
 dependencies {
     // Bundle core library directly as we only get to publish one jar per plugin in Gradle Plugin Portal
     bundleInside(project(":core"))
+    implementation(platform(libs.amazon.bom))
+    implementation(platform(libs.okhttp.bom))
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.google.gson)
-    implementation(platform(libs.amazon.bom))
+    implementation(libs.okhttp)
     implementation(libs.amazon.s3)
     implementation(libs.amazon.sso)
     runtimeOnly(libs.amazon.sts) {
