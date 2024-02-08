@@ -106,7 +106,7 @@ class S3StorageService(
                 throw Exception("Bucket $bucketName under project $region cannot be found or is not accessible using the provided credentials")
             }
         } catch (e: Exception) {
-            logger.warn("Couldn't validate S3 client config. This may be due to a connection error")
+            logger.warn("Couldn't validate S3 client config: ${e.message}")
         }
     }
 
