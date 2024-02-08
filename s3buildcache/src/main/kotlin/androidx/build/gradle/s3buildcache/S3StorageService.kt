@@ -131,6 +131,7 @@ class S3StorageService(
             return try {
                 val inputStream = client.getObject(request)
                 val blob = inputStream.response() ?: return null
+                if (blob.contentLength() == 0L) return null // return empty entries as a cache miss
                 if (blob.contentLength() > sizeThreshold) {
                     val path = FileHandleInputStream.create()
                     val outputStream = path.outputStream()
