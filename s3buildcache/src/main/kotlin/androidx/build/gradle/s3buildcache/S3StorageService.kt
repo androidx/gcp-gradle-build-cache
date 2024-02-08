@@ -100,9 +100,13 @@ class S3StorageService(
     }
 
     override fun validateConfiguration() {
-        val buckets = client.listBuckets().buckets()
-        if (buckets.none { bucket -> bucket.name() == bucketName }) {
-            throw Exception("Bucket $bucketName under project $region cannot be found or it is not accessible using the provided credentials")
+        try {
+            val buckets = client.listBuckets().buckets()
+            if (buckets.none { bucket -> bucket.name() == bucketName }) {
+                throw Exception("Bucket $bucketName under project $region cannot be found or is not accessible using the provided credentials")
+            }
+        } catch (e: Exception) {
+            logger.warn("Couldn't validate S3 client config. This may be due to a connection error")
         }
     }
 
@@ -162,7 +166,12 @@ class S3StorageService(
         }
 
         private fun delete(client: S3Client, request: DeleteObjectRequest): Boolean {
-            return client.deleteObject(request).deleteMarker()
+            return try {
+                client.deleteObject(request).deleteMarker()
+            } catch (e: Exception) {
+                logger.debug("Unable to delete $request", e)
+                false
+            }
         }
     }
 }
