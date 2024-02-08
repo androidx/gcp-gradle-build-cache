@@ -24,10 +24,7 @@ import org.gradle.caching.BuildCacheEntryReader
 import org.gradle.caching.BuildCacheEntryWriter
 import org.gradle.caching.BuildCacheKey
 import org.gradle.caching.BuildCacheService
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
+import software.amazon.awssdk.auth.credentials.*
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
 import java.io.ByteArrayOutputStream
@@ -103,6 +100,7 @@ class S3BuildCacheService(
             return when (s3Credentials) {
                 DefaultS3Credentials -> DefaultCredentialsProvider.create()
                 is SpecificCredentialsProvider -> s3Credentials.provider
+                is ProfileS3Credentials -> ProfileCredentialsProvider.create(s3Credentials.profile)
                 is ExportedS3Credentials -> StaticCredentialsProvider.create(
                     AwsBasicCredentials.create(s3Credentials.awsAccessKeyId, s3Credentials.awsSecretKey)
                 )

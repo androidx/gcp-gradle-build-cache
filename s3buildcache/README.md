@@ -27,7 +27,7 @@ buildCache {
 ```
 
 - `region`, `bucketName` are required.
-- `credentials` defaults to `DefaultS3Credentials`, but can also be set to `ExportedS3Credentials`, or `SpecificCredentialsProvider`.
+- `credentials` defaults to `DefaultS3Credentials`, but can also be set to `ExportedS3Credentials`, `ProfileS3Credentials`, or `SpecificCredentialsProvider`.
 - `isPush` defaults to `false`.
 
 ---
