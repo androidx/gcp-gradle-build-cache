@@ -28,7 +28,7 @@ sealed interface S3Credentials : Credentials
 /**
  * Use DefaultCredentialsProvider to authenticate to AWS.
  */
-object DefaultS3Credentials : S3Credentials
+data object DefaultS3Credentials : S3Credentials
 
 /**
  * Use a specific credentials provider
@@ -40,3 +40,8 @@ class SpecificCredentialsProvider(val provider: AwsCredentialsProvider) : S3Cred
  * Use provided keys to authenticate to AWS.
  */
 class ExportedS3Credentials(val awsAccessKeyId: String, val awsSecretKey: String) : S3Credentials
+
+/**
+ * Ensure that we load this profile to authenticate to AWS
+ */
+class ProfileS3Credentials(val profile: String) : S3Credentials
