@@ -89,5 +89,6 @@ tasks.named<Task>("check") {
 }
 
 tasks.withType<Sign>().configureEach {
-    onlyIf { project.hasProperty("signing.keyId") }
+    val signingKeyIdPresent = project.hasProperty("signing.keyId")
+    onlyIf("signing.keyId is present") { signingKeyIdPresent }
 }
