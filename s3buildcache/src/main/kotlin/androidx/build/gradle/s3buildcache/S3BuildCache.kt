@@ -31,6 +31,7 @@ abstract class S3BuildCache : RemoteGradleBuildCache() {
 
     /**
      * Whether to use reduced redundancy.
+     * When using S3 Express One Zone, set to false
      * @see <a href="https://aws.amazon.com/s3/reduced-redundancy/">Reduced Redundancy</a>
      * */
     var reducedRedundancy: Boolean = true
