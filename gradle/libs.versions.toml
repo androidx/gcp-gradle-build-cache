@@ -1,7 +1,7 @@
 [versions]
 gradle-publish = "1.1.0"
 kotlin = "1.9.22"
-amazon-bom = "2.20.18"
+amazon-bom = "2.25.0"
 google-cloud-storage = "2.30.1"
 s3-mock = "2.11.0"
 retrofit = "2.9.0"
