@@ -7,16 +7,15 @@ An implementation of the Gradle Remote Cache that's backed by Google Cloud Stora
 In your `settings.gradle.kts` file add the following
 
 ```kotlin
-plugins {
-    id("androidx.build.gradle.gcpbuildcache") version "1.0.0-beta07"
-}
-
 import androidx.build.gradle.gcpbuildcache.GcpBuildCache
 import androidx.build.gradle.gcpbuildcache.GcpBuildCacheServiceFactory
 import androidx.build.gradle.gcpbuildcache.ExportedKeyGcpCredentials
 
+plugins {
+    id("androidx.build.gradle.gcpbuildcache") version "1.0.0-beta07"
+}
+
 buildCache {
-    registerBuildCacheService(GcpBuildCache::class, GcpBuildCacheServiceFactory::class)
     remote(GcpBuildCache::class) {
         projectId = "foo"
         bucketName = "bar"
@@ -44,7 +43,6 @@ import androidx.build.gradle.gcpbuildcache.GcpBuildCacheServiceFactory
 import androidx.build.gradle.gcpbuildcache.ExportedKeyGcpCredentials
 
 buildCache {
-    registerBuildCacheService(GcpBuildCache, GcpBuildCacheServiceFactory)
     remote(GcpBuildCache) {
         projectId = "projectName"
         bucketName = "storageBucketName"
