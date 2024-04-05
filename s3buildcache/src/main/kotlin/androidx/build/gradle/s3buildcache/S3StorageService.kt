@@ -21,7 +21,9 @@ import androidx.build.gradle.core.FileHandleInputStream
 import androidx.build.gradle.core.FileHandleInputStream.Companion.handleInputStream
 import androidx.build.gradle.core.StorageService
 import org.gradle.api.logging.Logging
+import software.amazon.awssdk.core.exception.SdkClientException
 import software.amazon.awssdk.core.exception.SdkException
+import software.amazon.awssdk.core.exception.SdkServiceException
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
@@ -110,8 +112,8 @@ class S3StorageService(
             client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build())
         }  catch(e: NoSuchBucketException) {
             throw Exception("Bucket $bucketName in $region cannot be found: ${e.message}")
-        } catch  (e: SdkException ) {
-            throw Exception("AWS SDK exception on validating access to $bucketName in $region: ${e.message}")
+        } catch  (e: SdkServiceException ) {
+            throw Exception("AWS SDK exception on validating access to $bucketName in $region: ${e::class.simpleName} - ${e.message}")
         }
         catch (e: Exception) {
             logger.warn("Couldn't validate S3 client config: ${e.message}")
