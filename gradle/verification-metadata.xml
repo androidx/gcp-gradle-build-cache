@@ -89,6 +89,7 @@
          <trusted-key id="48F8E69F6390C9F25CFEDCD268248959359E722B" group="org.apache.tomcat.embed"/>
          <trusted-key id="4DB1A49729B053CAF015CEE9A6ADFC93EF34893E" group="org.hamcrest"/>
          <trusted-key id="4F7E32D440EF90A83011A8FC6425559C47CC79C4" group="javax.annotation"/>
+         <trusted-key id="50A628FFAF58480736B1079FD1031D14464180E0" group="org.reactivestreams"/>
          <trusted-key id="53C935821AA6A755BD337DB53595395EB3D8E1BA" group="org.apache.logging.log4j"/>
          <trusted-key id="54A26BFDC7ECDD39BA4C123AC3BAB45F4AF71FAB" group="io.opencensus"/>
          <trusted-key id="55C895C9A9A107F87E6E3BDC3C9B410084525C69" group="io.prometheus"/>
