@@ -21,13 +21,17 @@ import androidx.build.gradle.core.FileHandleInputStream
 import androidx.build.gradle.core.FileHandleInputStream.Companion.handleInputStream
 import androidx.build.gradle.core.StorageService
 import org.gradle.api.logging.Logging
+import software.amazon.awssdk.core.exception.SdkClientException
+import software.amazon.awssdk.core.exception.SdkException
+import software.amazon.awssdk.core.exception.SdkServiceException
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest
+import software.amazon.awssdk.services.s3.model.NoSuchBucketException
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.model.StorageClass.REDUCED_REDUNDANCY
-import software.amazon.awssdk.services.s3.model.StorageClass.STANDARD
 import java.io.InputStream
 import kotlin.io.path.outputStream
 
@@ -74,7 +78,11 @@ class S3StorageService(
         val request = PutObjectRequest.builder()
             .bucket(bucketName)
             .key(cacheKey)
-            .storageClass(if (reducedRedundancy) REDUCED_REDUNDANCY else STANDARD)
+            .apply {
+                if (reducedRedundancy) {
+                    storageClass(REDUCED_REDUNDANCY)
+                }
+            }
             .build()
         logger.info("Storing $cacheKey via $request")
         return store(client, request, contents)
@@ -101,11 +109,13 @@ class S3StorageService(
 
     override fun validateConfiguration() {
         try {
-            val buckets = client.listBuckets().buckets()
-            if (buckets.none { bucket -> bucket.name() == bucketName }) {
-                throw Exception("Bucket $bucketName under project $region cannot be found or is not accessible using the provided credentials")
-            }
-        } catch (e: Exception) {
+            client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build())
+        }  catch(e: NoSuchBucketException) {
+            throw Exception("Bucket $bucketName in $region cannot be found: ${e.message}")
+        } catch  (e: SdkServiceException ) {
+            throw Exception("AWS SDK exception on validating access to $bucketName in $region: ${e::class.simpleName} - ${e.message}")
+        }
+        catch (e: Exception) {
             logger.warn("Couldn't validate S3 client config: ${e.message}")
         }
     }
