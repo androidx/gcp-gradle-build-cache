@@ -43,6 +43,12 @@ dependencies {
     }
 }
 
+kotlin {
+    jvmToolchain {
+        jvmToolchain(17)
+    }
+}
+
 gradlePlugin {
     website = "https://github.com/androidx/gcp-gradle-build-cache"
     vcsUrl = "https://github.com/androidx/gcp-gradle-build-cache"
@@ -65,7 +71,7 @@ gradlePlugin {
 }
 
 group = "androidx.build.gradle.s3buildcache"
-version = "1.0.0-alpha05"
+version = "1.0.0-alpha06"
 
 testing {
     suites {

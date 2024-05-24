@@ -20,6 +20,12 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
 }
 
+kotlin {
+    jvmToolchain {
+        jvmToolchain(17)
+    }
+}
+
 gradlePlugin {
     plugins {
         create("bundlePlugin") {

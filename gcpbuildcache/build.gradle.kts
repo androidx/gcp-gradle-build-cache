@@ -35,6 +35,12 @@ dependencies {
     implementation(libs.okhttp)
 }
 
+kotlin {
+    jvmToolchain {
+        jvmToolchain(17)
+    }
+}
+
 gradlePlugin {
     website = "https://github.com/androidx/gcp-gradle-build-cache"
     vcsUrl = "https://github.com/androidx/gcp-gradle-build-cache"
@@ -53,7 +59,7 @@ gradlePlugin {
 }
 
 group = "androidx.build.gradle.gcpbuildcache"
-version = "1.0.0-beta08"
+version = "1.0.0-beta09"
 
 testing {
     suites {

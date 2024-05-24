@@ -30,6 +30,12 @@ dependencies {
     implementation(libs.okhttp)
 }
 
+kotlin {
+    jvmToolchain {
+        jvmToolchain(17)
+    }
+}
+
 testing {
     suites {
         // Configure the built-in test suite
