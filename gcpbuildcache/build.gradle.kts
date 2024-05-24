@@ -49,8 +49,7 @@ gradlePlugin {
             id = "androidx.build.gradle.gcpbuildcache"
             displayName = "Gradle GCP Build Cache Plugin"
             description = """
-                - Using newer okhttp dependency as retrofit depends on a really old version, see https://github.com/androidx/gcp-gradle-build-cache/pull/43
-                - Moved to a new signing key 8B39C4ACE0F448789FE19C8BAC0E2034B1389C89
+                - Move to targeting Java 17
             """.trimIndent()
             implementationClass = "androidx.build.gradle.gcpbuildcache.GcpGradleBuildCachePlugin"
             tags = listOf("buildcache", "gcp", "caching")

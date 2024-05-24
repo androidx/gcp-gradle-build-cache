@@ -57,12 +57,7 @@ gradlePlugin {
             id = "androidx.build.gradle.s3buildcache"
             displayName = "Gradle AWS S3 Build Cache Plugin"
             description = """
-                - Using newer okhttp dependency as retrofit depends on a really old version, see https://github.com/androidx/gcp-gradle-build-cache/pull/43
-                - Using newer amazon bom, see https://github.com/androidx/gcp-gradle-build-cache/pull/54
-                - Added support for s3 express zone, see https://github.com/androidx/gcp-gradle-build-cache/pull/53
-                - Added support for using specific AWS profile for auth, see https://github.com/androidx/gcp-gradle-build-cache/pull/45
-                - Better offline support, see https://github.com/androidx/gcp-gradle-build-cache/pull/44
-                - Moved to a new signing key 8B39C4ACE0F448789FE19C8BAC0E2034B1389C89
+                - Move to targeting Java 17
             """.trimIndent()
             implementationClass = "androidx.build.gradle.s3buildcache.S3GradleBuildCachePlugin"
             tags = listOf("buildcache", "s3", "caching")
