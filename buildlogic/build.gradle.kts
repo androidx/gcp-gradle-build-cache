@@ -17,7 +17,7 @@
 
 plugins {
     id("java-gradle-plugin")
-    alias(libs.plugins.kotlin.jvm)
+    `embedded-kotlin`
 }
 
 kotlin {
