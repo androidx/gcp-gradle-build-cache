@@ -29,8 +29,8 @@ class NetworkErrorInterceptor : Interceptor{
             chain.proceed(request)
         } catch (ex: IOException) {
             throw GradleException("There seems to be some issue with the network access. " +
-                    "Please use --offline with your gradle commands to continue working " +
-                    "without accessing network resources.")
+                    "Please check your internet access or use --offline with your gradle commands to continue working" +
+                    " without accessing network resources.")
         }
     }
 }
