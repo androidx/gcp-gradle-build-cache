@@ -19,6 +19,7 @@ package androidx.build.gradle.core
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -37,9 +38,15 @@ interface TokenInfoService {
 
     companion object {
         fun tokenService(): TokenInfoService {
+            val httpClient = OkHttpClient
+                .Builder()
+                .addInterceptor(NetworkErrorInterceptor())
+                .build()
+
             val retrofit = Retrofit.Builder()
                 .baseUrl("https://www.googleapis.com")
                 .addConverterFactory(GsonConverterFactory.create(gson()))
+                .client(httpClient)
                 .build()
 
             return retrofit.create()
