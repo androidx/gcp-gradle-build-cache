@@ -20,7 +20,7 @@ plugins {
     id("signing")
     id("bundle")
     alias(libs.plugins.gradle.publish)
-    alias(libs.plugins.kotlin.jvm)
+    `embedded-kotlin`
 }
 
 dependencies {

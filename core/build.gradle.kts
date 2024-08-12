@@ -16,14 +16,12 @@
  */
 
 plugins {
-    alias(libs.plugins.kotlin.jvm)
+    `embedded-kotlin`
 }
 
 dependencies {
     implementation(gradleApi())
     implementation(platform(libs.okhttp.bom))
-    api(platform(libs.kotlin.bom))
-    api(libs.kotlin.stdlib)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.google.gson)
