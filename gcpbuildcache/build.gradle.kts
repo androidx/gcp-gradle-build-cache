@@ -49,7 +49,7 @@ gradlePlugin {
             id = "androidx.build.gradle.gcpbuildcache"
             displayName = "Gradle GCP Build Cache Plugin"
             description = """
-                - Move to targeting Java 17
+                - Graduating to 1.0.0 stable version.
             """.trimIndent()
             implementationClass = "androidx.build.gradle.gcpbuildcache.GcpGradleBuildCachePlugin"
             tags = listOf("buildcache", "gcp", "caching")
@@ -58,7 +58,7 @@ gradlePlugin {
 }
 
 group = "androidx.build.gradle.gcpbuildcache"
-version = "1.0.0-beta10"
+version = "1.0.0"
 
 testing {
     suites {
