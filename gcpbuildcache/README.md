@@ -12,7 +12,7 @@ import androidx.build.gradle.gcpbuildcache.GcpBuildCacheServiceFactory
 import androidx.build.gradle.gcpbuildcache.ExportedKeyGcpCredentials
 
 plugins {
-    id("androidx.build.gradle.gcpbuildcache") version "1.0.0-beta09"
+    id("androidx.build.gradle.gcpbuildcache") version "1.0.0"
 }
 
 buildCache {
@@ -35,7 +35,7 @@ If you are using Groovy, then you should do the following:
 
 ```groovy
 plugins {
-    id("androidx.build.gradle.gcpbuildcache") version "1.0.0-beta09"
+    id("androidx.build.gradle.gcpbuildcache") version "1.0.0"
 }
 
 import androidx.build.gradle.gcpbuildcache.GcpBuildCache
