@@ -57,7 +57,7 @@ gradlePlugin {
             id = "androidx.build.gradle.s3buildcache"
             displayName = "Gradle AWS S3 Build Cache Plugin"
             description = """
-                - Move to targeting Java 17
+                - Promote to v1.0.0-beta01.
             """.trimIndent()
             implementationClass = "androidx.build.gradle.s3buildcache.S3GradleBuildCachePlugin"
             tags = listOf("buildcache", "s3", "caching")
@@ -66,7 +66,7 @@ gradlePlugin {
 }
 
 group = "androidx.build.gradle.s3buildcache"
-version = "1.0.0-alpha06"
+version = "1.0.0-beta01"
 
 testing {
     suites {
