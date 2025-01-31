@@ -10,8 +10,6 @@ protobuf = "3.25.1"
 okhttp-bom = "4.12.0"
 
 [libraries]
-kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
-kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }
 amazon-bom = { group = "software.amazon.awssdk", name = "bom", version.ref = "amazon-bom" }
 amazon-s3 = { group = "software.amazon.awssdk", name = "s3" }
 amazon-sso = { group = "software.amazon.awssdk", name = "sso" }
