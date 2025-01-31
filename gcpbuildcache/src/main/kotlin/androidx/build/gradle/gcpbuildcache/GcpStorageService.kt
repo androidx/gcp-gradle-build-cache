@@ -28,6 +28,9 @@ import com.google.cloud.storage.*
 import org.gradle.api.GradleException
 import org.gradle.api.logging.Logging
 import java.io.InputStream
+import java.time.Clock
+import java.time.OffsetDateTime
+
 
 /**
  * An implementation of the [StorageService] that is backed by Google Cloud Storage.
@@ -39,10 +42,11 @@ internal class GcpStorageService(
     messageOnAuthenticationFailure: String,
     override val isPush: Boolean,
     override val isEnabled: Boolean,
-    private val sizeThreshold: Long = BLOB_SIZE_THRESHOLD
+    private val sizeThreshold: Long = BLOB_SIZE_THRESHOLD,
+    private val clock: Clock = Clock.systemDefaultZone(),
 ) : StorageService {
 
-    private val storageOptions by lazy {
+    private val storageOptions: StorageOptions? by lazy {
         storageOptions(projectId, gcpCredentials, messageOnAuthenticationFailure, isPush)
     }
 
@@ -51,9 +55,12 @@ internal class GcpStorageService(
             logger.info("Not Enabled")
             return null
         }
+        val storageOptions = storageOptions ?: return null
         val blobId = BlobId.of(bucketName, cacheKey)
         logger.info("Loading $cacheKey from ${blobId.name}")
-        return load(storageOptions, blobId, sizeThreshold)
+        val content = load(storageOptions, blobId, sizeThreshold)
+        update(storageOptions, blobId, OffsetDateTime.now(clock))
+        return content
     }
 
     override fun store(cacheKey: String, contents: ByteArray): Boolean {
@@ -69,7 +76,7 @@ internal class GcpStorageService(
         val blobId = BlobId.of(bucketName, cacheKey)
 
         logger.info("Storing $cacheKey into ${blobId.name}")
-        return store(storageOptions, blobId, contents)
+        return store(storageOptions, blobId, contents, OffsetDateTime.now(clock))
     }
 
     override fun delete(cacheKey: String): Boolean {
@@ -86,12 +93,7 @@ internal class GcpStorageService(
 
     override fun validateConfiguration() {
         if (storageOptions?.service?.get(bucketName, Storage.BucketGetOption.fields()) == null) {
-            throw Exception(
-                """
-                Bucket $bucketName under project $projectId cannot be found or it is not accessible using the provided
-                credentials.
-                """.trimIndent()
-            )
+            error("Bucket $bucketName under project $projectId cannot be found or it is not accessible using the provided credentials.")
         }
     }
 
@@ -100,10 +102,7 @@ internal class GcpStorageService(
     }
 
     companion object {
-
-        private val logger by lazy {
-            Logging.getLogger("GcpStorageService")
-        }
+        private val logger = Logging.getLogger("GcpStorageService")
 
         private val transportOptions by lazy {
             GcpTransportOptions(HttpTransportOptions.newBuilder())
@@ -126,7 +125,7 @@ internal class GcpStorageService(
                 val blob = storage.service.get(blobId) ?: return null
                 return if (blob.size == 0L) {
                     // return empty entries as a cache miss
-                    null
+                    return null
                 } else if (blob.size > sizeThreshold) {
                     val path = FileHandleInputStream.create()
                     blob.downloadTo(path)
@@ -143,15 +142,37 @@ internal class GcpStorageService(
             }
         }
 
-        private fun store(storage: StorageOptions?, blobId: BlobId, contents: ByteArray): Boolean {
+        private fun store(
+            storage: StorageOptions?,
+            blobId: BlobId,
+            contents: ByteArray,
+            customTime: OffsetDateTime,
+        ): Boolean {
             if (storage == null) return false
-            val blobInfo = BlobInfo.newBuilder(blobId).build()
+            val blobInfo = BlobInfo.newBuilder(blobId)
+                .setCustomTimeOffsetDateTime(customTime)
+                .build()
             return try {
                 storage.service.createFrom(blobInfo, contents.inputStream())
                 true
             } catch (storageException: StorageException) {
                 logger.debug("Unable to store Blob ($blobId)", storageException)
                 false
+            }
+        }
+
+        private fun update(
+            storage: StorageOptions,
+            blobId: BlobId,
+            customTime: OffsetDateTime,
+        ) {
+            val blob = storage.service.get(blobId) ?: return
+            if (blob.customTimeOffsetDateTime < customTime) {
+                logger.info("Updating Custom-Time for ${blobId.name} to $customTime")
+                blob.toBuilder()
+                    .setCustomTimeOffsetDateTime(customTime)
+                    .build()
+                storage.service.update(blob)
             }
         }
 
@@ -242,15 +263,20 @@ internal class GcpStorageService(
             messageOnAuthenticationFailure: String,
             isPushSupported: Boolean
         ): GoogleCredentials? {
-            val scopes = mutableListOf(
-                STORAGE_READ_ONLY,
-            )
-            if (isPushSupported) {
-                scopes += listOf(STORAGE_READ_WRITE, STORAGE_FULL_CONTROL)
+            val scopes = buildList {
+                add(STORAGE_READ_ONLY)
+                if (isPushSupported) {
+                    add(STORAGE_READ_WRITE)
+                    add(STORAGE_FULL_CONTROL)
+                }
             }
             return when (gcpCredentials) {
                 is ApplicationDefaultGcpCredentials -> {
-                    defaultApplicationGcpCredentials(scopes, messageOnAuthenticationFailure, forceClearCache = false)
+                    defaultApplicationGcpCredentials(
+                        scopes,
+                        messageOnAuthenticationFailure,
+                        forceClearCache = false
+                    )
                 }
 
                 is ExportedKeyGcpCredentials -> {
@@ -268,12 +294,7 @@ internal class GcpStorageService(
                         // in case the credentials have expired
                         credentials.refreshIfExpired()
                     } catch (e: Exception) {
-                        throw GradleException(
-                            """
-                            "Your GCP Credentials have expired.
-                            Please regenerate credentials and try again.
-                            """.trimIndent()
-                        )
+                        error("Your GCP Credentials have expired. Please regenerate credentials and try again: gcloud auth application-default login")
                     }
                     val tokenService = TokenInfoService.tokenService()
                     val tokenInfoResponse = tokenService.tokenInfo(credentials.accessToken.tokenValue).execute()
