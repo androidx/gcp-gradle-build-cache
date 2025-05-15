@@ -26,11 +26,20 @@ import java.nio.file.Files
  */
 class FileSystemStorageService(
     override val bucketName: String,
+    private val prefix: String?,
     override val isPush: Boolean,
     override val isEnabled: Boolean
 ) : StorageService {
 
-    private val location = Files.createTempDirectory("tmp$bucketName").toFile()
+    private val location: File = createTempDirectory()
+
+    private fun createTempDirectory(): File {
+        val baseDir = prefix?.takeIf { it.isNotBlank() }?.let {
+            File(it).apply { if (!exists()) mkdirs() }
+        } ?: File(System.getProperty(JAVA_IO_TMPDIR))
+
+        return Files.createTempDirectory(baseDir.toPath(), "tmp$bucketName").toFile()
+    }
 
     override fun load(cacheKey: String): InputStream? {
         if (!isEnabled) {
@@ -84,6 +93,8 @@ class FileSystemStorageService(
     }
 
     companion object {
+        private const val JAVA_IO_TMPDIR = "java.io.tmpdir"
+
         private fun File.deleteRecursively() {
             val files = listFiles()
             for (file in files) {

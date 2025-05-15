@@ -30,6 +30,8 @@ abstract class RemoteGradleBuildCache : AbstractBuildCache() {
      */
     lateinit var bucketName: String
 
+    lateinit var prefix: String
+
     /**
      * The type of credentials to use to connect to authenticate to your project instance.
      */
