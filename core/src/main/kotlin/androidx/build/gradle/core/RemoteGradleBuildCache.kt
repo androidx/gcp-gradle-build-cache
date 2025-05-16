@@ -30,6 +30,11 @@ abstract class RemoteGradleBuildCache : AbstractBuildCache() {
      */
     lateinit var bucketName: String
 
+    /**
+     * The prefix to use when storing cache entries in the bucket.
+     * It becomes new root for all cache entries.
+     * If not specified, the cache entries will be stored at the root of the bucket.
+     */
     lateinit var prefix: String
 
     /**
