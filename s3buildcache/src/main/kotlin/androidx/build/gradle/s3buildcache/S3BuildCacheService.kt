@@ -19,6 +19,7 @@ package androidx.build.gradle.s3buildcache
 
 import androidx.build.gradle.core.FileSystemStorageService
 import androidx.build.gradle.core.blobKey
+import androidx.build.gradle.core.withPrefix
 import org.gradle.api.logging.Logging
 import org.gradle.caching.BuildCacheEntryReader
 import org.gradle.caching.BuildCacheEntryWriter
@@ -42,6 +43,7 @@ class S3BuildCacheService(
     credentials: S3Credentials,
     region: String,
     bucketName: String,
+    private val prefix: String?,
     isPush: Boolean,
     isEnabled: Boolean,
     reducedRedundancy: Boolean,
@@ -52,14 +54,28 @@ class S3BuildCacheService(
         clientOptions(credentials(credentials), region)
     }
     private val storageService = if (inTestMode) {
-        FileSystemStorageService(bucketName, isPush, isEnabled)
+        FileSystemStorageService(
+            bucketName = bucketName,
+            prefix = prefix,
+            isPush = isPush,
+            isEnabled = isEnabled,
+        )
     } else {
-        S3StorageService(bucketName, isPush, isEnabled, client, region, reducedRedundancy)
+        S3StorageService(
+            bucketName = bucketName,
+            isPush = isPush,
+            isEnabled = isEnabled,
+            client = client,
+            region = region,
+            reducedRedundancy = reducedRedundancy
+        )
     }
 
     override fun load(key: BuildCacheKey, reader: BuildCacheEntryReader): Boolean {
         logger.info("Loading ${key.blobKey()}")
-        val cacheKey = key.blobKey()
+        val cacheKey = key
+            .blobKey()
+            .apply { if (prefix != null) withPrefix(prefix) }
         val input = storageService.load(cacheKey) ?: return false
         reader.readFrom(input)
         return true
@@ -67,8 +83,10 @@ class S3BuildCacheService(
 
     override fun store(key: BuildCacheKey, writer: BuildCacheEntryWriter) {
         if (writer.size == 0L) return // do not store empty entries into the cache
+        val cacheKey = key
+            .blobKey()
+            .apply { if (prefix != null) withPrefix(prefix) }
         logger.info("Storing ${key.blobKey()}")
-        val cacheKey = key.blobKey()
         val output = ByteArrayOutputStream()
         output.use {
             writer.writeTo(output)

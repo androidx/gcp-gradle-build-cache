@@ -24,6 +24,23 @@ class FileStorageServiceTest {
     fun testStoreBlob() {
         val storageService = FileSystemStorageService(
             bucketName = BUCKET_NAME,
+            prefix = null,
+            isPush = true,
+            isEnabled = true
+        )
+        storageService.use {
+            val cacheKey = "test-store.txt"
+            val contents = "The quick brown fox jumped over the lazy dog"
+            val result = storageService.store(cacheKey, contents.toByteArray(Charsets.UTF_8))
+            assert(result)
+        }
+    }
+
+    @Test
+    fun testStoreBlob_withPrefix() {
+        val storageService = FileSystemStorageService(
+            bucketName = BUCKET_NAME,
+            prefix = "test-prefix",
             isPush = true,
             isEnabled = true
         )
@@ -39,6 +56,7 @@ class FileStorageServiceTest {
     fun testLoadBlob() {
         val storageService = FileSystemStorageService(
             bucketName = BUCKET_NAME,
+            prefix = null,
             isPush = true,
             isEnabled = true
         )
@@ -57,6 +75,7 @@ class FileStorageServiceTest {
     fun testStoreBlob_noPushSupport() {
         val storageService = FileSystemStorageService(
             bucketName = BUCKET_NAME,
+            prefix = null,
             isPush = false,
             isEnabled = true
         )
@@ -72,6 +91,7 @@ class FileStorageServiceTest {
     fun testStoreBlob_disabled() {
         val storageService = FileSystemStorageService(
             bucketName = BUCKET_NAME,
+            prefix = null,
             isPush = true,
             isEnabled = false
         )
