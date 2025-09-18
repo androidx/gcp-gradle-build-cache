@@ -26,7 +26,6 @@ class BundlePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val bundleInside = project.configurations.create("bundleInside") {
             it.isTransitive = false
-            it.isVisible = false
             it.isCanBeResolved = true
         }
         project.afterEvaluate {
