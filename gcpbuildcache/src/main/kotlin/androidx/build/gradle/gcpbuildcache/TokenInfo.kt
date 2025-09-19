@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  *
  */
 
-package androidx.build.gradle.core
+package androidx.build.gradle.gcpbuildcache
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -32,7 +32,8 @@ internal fun gson(config: GsonBuilder.() -> Unit = {}): Gson {
     config.invoke(builder)
     return builder.create()
 }
-interface TokenInfoService {
+
+internal interface TokenInfoService {
     @GET("/oauth2/v1/tokeninfo")
     fun tokenInfo(@Query("access_token") accessToken: String): Call<Unit>
 
