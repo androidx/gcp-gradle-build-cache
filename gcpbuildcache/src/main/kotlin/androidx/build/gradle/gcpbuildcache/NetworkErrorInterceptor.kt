@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
  *
  */
 
-package androidx.build.gradle.core
+package androidx.build.gradle.gcpbuildcache
 
 import okhttp3.Interceptor
 import okhttp3.Response
 import org.gradle.api.GradleException
 import java.io.IOException
 
-class NetworkErrorInterceptor : Interceptor{
+class NetworkErrorInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         return try {

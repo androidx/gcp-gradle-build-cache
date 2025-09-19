@@ -20,7 +20,6 @@ package androidx.build.gradle.gcpbuildcache
 import androidx.build.gradle.core.FileHandleInputStream
 import androidx.build.gradle.core.FileHandleInputStream.Companion.handleInputStream
 import androidx.build.gradle.core.StorageService
-import androidx.build.gradle.core.TokenInfoService
 import com.google.api.gax.retrying.RetrySettings
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.http.HttpTransportOptions
