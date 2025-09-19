@@ -15,6 +15,8 @@
  *
  */
 
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+
 plugins {
     id("maven-publish")
     id("signing")
@@ -47,6 +49,10 @@ kotlin {
     jvmToolchain {
         jvmToolchain(17)
     }
+    compilerOptions {
+        languageVersion.set(KotlinVersion.KOTLIN_2_0)
+    }
+    coreLibrariesVersion = "2.0.0"
 }
 
 gradlePlugin {
