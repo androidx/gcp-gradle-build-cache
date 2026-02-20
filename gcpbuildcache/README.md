@@ -62,7 +62,7 @@ buildCache {
 2. Create a GCP project `YOUR-GCP-PROJECT` and [set up billing](https://cloud.google.com/billing/docs/how-to/manage-billing-account#create_a_new_billing_account).
 3. Create a Google Cloud Storage bucket
 ```bash
-gsutil mb –p YOUR-GCP-PROJECT gs://YOUR-BUCKET-NAME
+gcloud storage buckets create gs://YOUR-BUCKET-NAME --project YOUR-GCP-PROJECT
 ```
 4. Create IAM roles for read and read/write
 ```bash
