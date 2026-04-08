@@ -28,6 +28,7 @@ import software.amazon.awssdk.auth.credentials.*
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
 import java.io.ByteArrayOutputStream
+import java.net.URI
 
 /**
  * The service that responds to Gradle's request to load and store results for a given
@@ -35,6 +36,8 @@ import java.io.ByteArrayOutputStream
  *
  * @param region The AWS region the S3 bucket is located in.
  * @param bucketName The name of the bucket that is used to store all the gradle cache entries.
+ * @param endpoint An optional endpoint override.
+ * @param forcePathStyle Whether to force path-style over virtual-hosted-style for bucket URL.
  * @param reducedRedundancy Whether to use reduced redundancy.
  * This essentially becomes the root of all cache entries.
  */
@@ -42,6 +45,8 @@ class S3BuildCacheService(
     credentials: S3Credentials,
     region: String,
     bucketName: String,
+    endpoint: String?,
+    forcePathStyle: Boolean,
     isPush: Boolean,
     isEnabled: Boolean,
     reducedRedundancy: Boolean,
@@ -49,7 +54,7 @@ class S3BuildCacheService(
 ) : BuildCacheService {
 
     private val client by lazy {
-        clientOptions(credentials(credentials), region)
+        clientOptions(credentials(credentials), region, endpoint, forcePathStyle)
     }
     private val storageService = if (inTestMode) {
         FileSystemStorageService(bucketName, isPush, isEnabled)
@@ -90,10 +95,14 @@ class S3BuildCacheService(
             Logging.getLogger("AwsS3BuildCacheService")
         }
 
-        private fun clientOptions(credentials: AwsCredentialsProvider, region: String): S3Client {
+        private fun clientOptions(credentials: AwsCredentialsProvider, region: String, endpoint: String?, forcePathStyle: Boolean): S3Client {
             return S3Client.builder()
                 .credentialsProvider(credentials)
                 .region(Region.of(region))
+                .forcePathStyle(forcePathStyle)
+                .apply {
+                    endpoint?.let { endpointOverride(URI.create(it)) }
+                }
                 .build()
         }
 
