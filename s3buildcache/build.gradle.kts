@@ -72,13 +72,12 @@ version = "1.0.0-beta01"
 testing {
     suites {
         // Configure built-in test suite.
-
-        val test by getting(JvmTestSuite::class) {
+        val test = getByName<JvmTestSuite>("test") {
             useJUnit()
         }
 
         // Create a new functional test suite.
-        val functionalTest by registering(JvmTestSuite::class) {
+        register<JvmTestSuite>("functionalTest") {
             useJUnit()
 
             dependencies {

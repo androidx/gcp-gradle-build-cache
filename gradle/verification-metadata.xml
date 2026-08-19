@@ -27,6 +27,7 @@
       <trusted-artifacts>
          <trust group="gradle" name="gradle"/>
          <trust group="org.codehaus.groovy"/>
+         <trust group="org.apache.groovy"/>
       </trusted-artifacts>
       <ignored-keys>
          <ignored-key id="D433B437192A0FD1" reason="Key is not available in any key server"/>

@@ -2,6 +2,10 @@
 
 An implementation of the Gradle Remote Cache that's backed by AWS S3 buckets.
 
+## Requirements
+
+- Gradle 9.0.0 or newer
+
 ## Using the plugin
 
 In your `settings.gradle(.kts)` file add the following

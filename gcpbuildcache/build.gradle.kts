@@ -41,12 +41,12 @@ kotlin {
     jvmToolchain {
         jvmToolchain(17)
     }
-    // Kotlin 1.9 is needed to support Gradle 8.4, if the value is changed, update README.md
+    // Kotlin 2.0 is needed to support Gradle 9.0.0, if the value is changed, update README.md
     compilerOptions {
-        @Suppress("DEPRECATION") // 1.9 is deprecated when using KGP 2.2.20
-        languageVersion.set(KotlinVersion.KOTLIN_1_9)
+        @Suppress("DEPRECATION") // 2.0 is deprecated when using KGP 2.4.10
+        languageVersion.set(KotlinVersion.KOTLIN_2_0)
     }
-    coreLibrariesVersion = "1.9.0"
+    coreLibrariesVersion = "2.0.0"
 }
 
 gradlePlugin {
@@ -57,7 +57,8 @@ gradlePlugin {
             id = "androidx.build.gradle.gcpbuildcache"
             displayName = "Gradle GCP Build Cache Plugin"
             description = """
-                - Graduating to 1.0.0 stable version.
+                - Revert move to using GRPC as it break configuration caching on Mac
+                - Update minimum Gradle requirement to Gradle 9.0.0
             """.trimIndent()
             implementationClass = "androidx.build.gradle.gcpbuildcache.GcpGradleBuildCachePlugin"
             tags = listOf("buildcache", "gcp", "caching")
@@ -66,17 +67,17 @@ gradlePlugin {
 }
 
 group = "androidx.build.gradle.gcpbuildcache"
-version = "1.0.0"
+version = "1.0.2"
 
 testing {
     suites {
         // Configure built-in test suite.
-        val test by getting(JvmTestSuite::class) {
+        val test = getByName<JvmTestSuite>("test") {
             useJUnit()
         }
 
         // Create a new functional test suite.
-        val functionalTest by registering(JvmTestSuite::class) {
+        register<JvmTestSuite>("functionalTest") {
             useJUnit()
 
             dependencies {
