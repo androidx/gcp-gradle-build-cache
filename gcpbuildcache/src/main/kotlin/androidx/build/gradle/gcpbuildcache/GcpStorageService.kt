@@ -172,11 +172,10 @@ internal class GcpStorageService(
             ) ?: return null
             val retrySettings = RetrySettings.newBuilder()
             retrySettings.maxAttempts = 3
-            return GrpcStorageOptions.newBuilder().setCredentials(credentials)
+            return StorageOptions.newBuilder().setCredentials(credentials)
                 .setStorageRetryStrategy(StorageRetryStrategy.getUniformStorageRetryStrategy()).setProjectId(projectId)
                 .setRetrySettings(retrySettings.build())
-                .setEnableGrpcClientMetrics(false)
-                .setAttemptDirectPath(false)
+                .setTransportOptions(transportOptions)
                 .build()
         }
 
