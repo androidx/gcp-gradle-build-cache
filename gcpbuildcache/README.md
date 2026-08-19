@@ -4,7 +4,7 @@ An implementation of the Gradle Remote Cache that's backed by Google Cloud Stora
 
 ## Requirements
 
-- Gradle 8.4 or newer
+- Gradle 9.0.0 or newer
 
 ## Using the plugin
 
@@ -16,7 +16,7 @@ import androidx.build.gradle.gcpbuildcache.GcpBuildCacheServiceFactory
 import androidx.build.gradle.gcpbuildcache.ExportedKeyGcpCredentials
 
 plugins {
-    id("androidx.build.gradle.gcpbuildcache") version "1.0.1"
+    id("androidx.build.gradle.gcpbuildcache") version "1.0.2"
 }
 
 buildCache {
