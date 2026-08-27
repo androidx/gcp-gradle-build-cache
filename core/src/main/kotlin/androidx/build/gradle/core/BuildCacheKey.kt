@@ -31,3 +31,10 @@ fun BuildCacheKey.blobKey(): String {
     // a single `/`.
     return hashCode.replace(slashes, "/")
 }
+
+fun String.withPrefix(prefix: String?): String {
+    if (prefix.isNullOrBlank()) return this
+
+    val sanitizedPrefix = prefix.trimEnd('/', '\\')
+    return "$sanitizedPrefix/$this"
+}

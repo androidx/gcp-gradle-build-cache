@@ -32,6 +32,7 @@ class GcpBuildCacheServiceFactory : BuildCacheServiceFactory<GcpBuildCache> {
             .type("GCP-backed")
             .config("projectId", buildCache.projectId)
             .config("bucketName", buildCache.bucketName)
+            .config("prefix", buildCache.prefix)
             .config("isPushSupported", "${buildCache.isPush}")
             .config("isEnabled", "${buildCache.isEnabled}")
             .config(
@@ -40,12 +41,13 @@ class GcpBuildCacheServiceFactory : BuildCacheServiceFactory<GcpBuildCache> {
             )
 
         val service = GcpBuildCacheService(
-            buildCache.projectId,
-            buildCache.bucketName,
-            buildCache.credentials,
-            buildCache.messageOnAuthenticationFailure,
-            buildCache.isPush,
-            buildCache.isEnabled
+            projectId = buildCache.projectId,
+            bucketName = buildCache.bucketName,
+            prefix = buildCache.prefix,
+            gcpCredentials = buildCache.credentials,
+            messageOnAuthenticationFailure = buildCache.messageOnAuthenticationFailure,
+            isPush = buildCache.isPush,
+            isEnabled = buildCache.isEnabled
         )
         service.validateConfiguration()
         return service

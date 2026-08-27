@@ -19,6 +19,7 @@ package androidx.build.gradle.gcpbuildcache
 
 import androidx.build.gradle.core.FileSystemStorageService
 import androidx.build.gradle.core.blobKey
+import androidx.build.gradle.core.withPrefix
 import org.gradle.api.logging.Logging
 import org.gradle.caching.BuildCacheEntryReader
 import org.gradle.caching.BuildCacheEntryWriter
@@ -37,6 +38,7 @@ import java.io.ByteArrayOutputStream
 internal class GcpBuildCacheService(
     private val projectId: String,
     private val bucketName: String,
+    private val prefix: String?,
     gcpCredentials: GcpCredentials,
     messageOnAuthenticationFailure: String,
     isPush: Boolean,
@@ -46,9 +48,21 @@ internal class GcpBuildCacheService(
 
     private val storageService = if (inTestMode) {
         // Use an implementation backed by the File System when in test mode.
-        FileSystemStorageService(bucketName, isPush, isEnabled)
+        FileSystemStorageService(
+            bucketName = bucketName,
+            prefix = prefix,
+            isPush = isPush,
+            isEnabled = isEnabled,
+        )
     } else {
-        GcpStorageService(projectId, bucketName, gcpCredentials, messageOnAuthenticationFailure, isPush, isEnabled)
+        GcpStorageService(
+            projectId = projectId,
+            bucketName = bucketName,
+            gcpCredentials = gcpCredentials,
+            messageOnAuthenticationFailure = messageOnAuthenticationFailure,
+            isPush = isPush,
+            isEnabled = isEnabled
+        )
     }
 
     override fun close() {
@@ -57,7 +71,9 @@ internal class GcpBuildCacheService(
 
     override fun load(key: BuildCacheKey, reader: BuildCacheEntryReader): Boolean {
         logger.info("Loading ${key.blobKey()}")
-        val cacheKey = key.blobKey()
+        val cacheKey = key
+            .blobKey()
+            .apply { if (prefix != null) withPrefix(prefix) }
         val input = storageService.load(cacheKey) ?: return false
         reader.readFrom(input)
         return true
@@ -66,7 +82,9 @@ internal class GcpBuildCacheService(
     override fun store(key: BuildCacheKey, writer: BuildCacheEntryWriter) {
         if (writer.size == 0L) return // do not store empty entries into the cache
         logger.info("Storing ${key.blobKey()}")
-        val cacheKey = key.blobKey()
+        val cacheKey = key
+            .blobKey()
+            .apply { if (prefix != null) withPrefix(prefix) }
         val output = ByteArrayOutputStream()
         output.use {
             writer.writeTo(output)
