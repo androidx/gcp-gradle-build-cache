@@ -20,6 +20,7 @@ package androidx.build.gradle.s3buildcache
 import androidx.build.gradle.core.FileSystemStorageService
 import androidx.build.gradle.core.blobKey
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.Provider
 import org.gradle.caching.BuildCacheEntryReader
 import org.gradle.caching.BuildCacheEntryWriter
 import org.gradle.caching.BuildCacheKey
@@ -42,7 +43,7 @@ class S3BuildCacheService(
     credentials: S3Credentials,
     region: String,
     bucketName: String,
-    isPush: Boolean,
+    isPush: Provider<Boolean>,
     isEnabled: Boolean,
     reducedRedundancy: Boolean,
     inTestMode: Boolean = false

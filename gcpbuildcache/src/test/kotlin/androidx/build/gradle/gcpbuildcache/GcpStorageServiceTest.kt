@@ -17,6 +17,8 @@
 
 package androidx.build.gradle.gcpbuildcache
 
+import org.gradle.api.model.ObjectFactory
+import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assume.assumeNotNull
 import org.junit.Test
 import java.io.File
@@ -27,6 +29,8 @@ import java.io.File
 class GcpStorageServiceTest {
     private val serviceAccountPath = System.getenv()["GRADLE_CACHE_SERVICE_ACCOUNT_PATH"]
 
+    private val objectFactory: ObjectFactory = ProjectBuilder.builder().build().objects
+
     @Test
     fun testStoreBlob() {
         assumeNotNull(serviceAccountPath)
@@ -35,7 +39,7 @@ class GcpStorageServiceTest {
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             messageOnAuthenticationFailure = "Please re-authenticate",
-            isPush = true,
+            isPush = objectFactory.property(Boolean::class.java).convention(true),
             isEnabled = true,
             sizeThreshold = 0L
         )
@@ -56,7 +60,7 @@ class GcpStorageServiceTest {
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             messageOnAuthenticationFailure = "Please re-authenticate",
-            isPush = true,
+            isPush = objectFactory.property(Boolean::class.java).convention(true),
             isEnabled = true,
             sizeThreshold = 0L
         )
@@ -80,7 +84,7 @@ class GcpStorageServiceTest {
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             messageOnAuthenticationFailure = "Please re-authenticate",
-            isPush = false,
+            isPush = objectFactory.property(Boolean::class.java).convention(false),
             isEnabled = true,
             sizeThreshold = 0L
         )
@@ -100,7 +104,7 @@ class GcpStorageServiceTest {
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             messageOnAuthenticationFailure = "Please re-authenticate",
-            isPush = true,
+            isPush = objectFactory.property(Boolean::class.java).convention(true),
             isEnabled = true,
             sizeThreshold = 0L
         )
@@ -109,7 +113,7 @@ class GcpStorageServiceTest {
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath)),
             messageOnAuthenticationFailure = "Please re-authenticate",
-            isPush = false,
+            isPush = objectFactory.property(Boolean::class.java).convention(false),
             isEnabled = true,
             sizeThreshold = 0L
         )
@@ -135,7 +139,7 @@ class GcpStorageServiceTest {
             bucketName = BUCKET_NAME,
             gcpCredentials = ExportedKeyGcpCredentials(File(serviceAccountPath!!)),
             messageOnAuthenticationFailure = "Please re-authenticate",
-            isPush = true,
+            isPush = objectFactory.property(Boolean::class.java).convention(true),
             isEnabled = false,
             sizeThreshold = 0L
         )

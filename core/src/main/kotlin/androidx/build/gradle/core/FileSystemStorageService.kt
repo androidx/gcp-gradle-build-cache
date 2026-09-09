@@ -17,6 +17,7 @@
 
 package androidx.build.gradle.core
 
+import org.gradle.api.provider.Provider
 import java.io.File
 import java.io.InputStream
 import java.nio.file.Files
@@ -26,7 +27,7 @@ import java.nio.file.Files
  */
 class FileSystemStorageService(
     override val bucketName: String,
-    override val isPush: Boolean,
+    override val isPush: Provider<Boolean>,
     override val isEnabled: Boolean
 ) : StorageService {
 
@@ -50,7 +51,7 @@ class FileSystemStorageService(
             return false
         }
 
-        if (!isPush) {
+        if (!isPush.get()) {
             return false
         }
 
@@ -67,7 +68,7 @@ class FileSystemStorageService(
             return false
         }
 
-        if (!isPush) {
+        if (!isPush.get()) {
             return false
         }
 

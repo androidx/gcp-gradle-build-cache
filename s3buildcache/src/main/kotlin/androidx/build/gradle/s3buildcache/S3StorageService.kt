@@ -21,8 +21,7 @@ import androidx.build.gradle.core.FileHandleInputStream
 import androidx.build.gradle.core.FileHandleInputStream.Companion.handleInputStream
 import androidx.build.gradle.core.StorageService
 import org.gradle.api.logging.Logging
-import software.amazon.awssdk.core.exception.SdkClientException
-import software.amazon.awssdk.core.exception.SdkException
+import org.gradle.api.provider.Provider
 import software.amazon.awssdk.core.exception.SdkServiceException
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
@@ -37,7 +36,7 @@ import kotlin.io.path.outputStream
 
 class S3StorageService(
     override val bucketName: String,
-    override val isPush: Boolean,
+    override val isPush: Provider<Boolean>,
     override val isEnabled: Boolean,
     private val client: S3Client,
     private val region: String,
@@ -65,7 +64,7 @@ class S3StorageService(
             return false
         }
 
-        if (!isPush) {
+        if (!isPush.get()) {
             logger.info("No push support")
             return false
         }
@@ -94,7 +93,7 @@ class S3StorageService(
             return false
         }
 
-        if (!isPush) {
+        if (!isPush.get()) {
             logger.info("No push support")
             return false
         }

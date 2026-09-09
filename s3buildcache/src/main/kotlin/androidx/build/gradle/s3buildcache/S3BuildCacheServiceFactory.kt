@@ -34,14 +34,13 @@ class S3BuildCacheServiceFactory : BuildCacheServiceFactory<S3BuildCache> {
             .config("region", buildCache.region)
             .config("bucketName", buildCache.bucketName)
             .config("reducedRedundancy", "${buildCache.reducedRedundancy}")
-            .config("isPushSupported", "${buildCache.isPush}")
             .config("isEnabled", "${buildCache.isEnabled}")
             .config("credentialsType", "${buildCache.credentials}")
 
         val service = S3BuildCacheService(
             region = buildCache.region,
             bucketName = buildCache.bucketName,
-            isPush = buildCache.isPush,
+            isPush = buildCache.runtimePush.orElse(buildCache.isPush),
             isEnabled = buildCache.isEnabled,
             reducedRedundancy = buildCache.reducedRedundancy,
             credentials = buildCache.credentials

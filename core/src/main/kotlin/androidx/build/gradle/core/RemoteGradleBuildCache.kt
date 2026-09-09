@@ -17,12 +17,27 @@
 
 package androidx.build.gradle.core
 
+import org.gradle.api.provider.Property
 import org.gradle.caching.configuration.AbstractBuildCache
 
 /**
  * Gradle Build Cache that uses a cloud storage provider as a backing to load and store Gradle cache results.
  */
 abstract class RemoteGradleBuildCache : AbstractBuildCache() {
+
+    /**
+     * Runtime switch that determines whether the build attempts to upload entries
+     * to the remote build cache.
+     *
+     * Unlike [org.gradle.caching.configuration.BuildCache.isPush], this flag is **not**
+     * part of the Gradle Configuration Cache model’s fingerprint and is only used at execution
+     * time.
+     *
+     * Keeping `push = true` in `settings.gradle[.kts]` and gating uploads with this property allows you to
+     * toggle pushing without invalidating the configuration cache
+     *
+     */
+    abstract val runtimePush: Property<Boolean>
 
     /**
      * The name of the bucket that is used to store all the gradle cache entries.

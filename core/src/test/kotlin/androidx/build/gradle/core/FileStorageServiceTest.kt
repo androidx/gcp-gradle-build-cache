@@ -17,14 +17,19 @@
 
 package androidx.build.gradle.core
 
+import org.gradle.api.model.ObjectFactory
+import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Test
 
 class FileStorageServiceTest {
+
+    private val objectFactory: ObjectFactory = ProjectBuilder.builder().build().objects
+
     @Test
     fun testStoreBlob() {
         val storageService = FileSystemStorageService(
             bucketName = BUCKET_NAME,
-            isPush = true,
+            isPush = objectFactory.property(Boolean::class.java).convention(true),
             isEnabled = true
         )
         storageService.use {
@@ -39,7 +44,7 @@ class FileStorageServiceTest {
     fun testLoadBlob() {
         val storageService = FileSystemStorageService(
             bucketName = BUCKET_NAME,
-            isPush = true,
+            isPush = objectFactory.property(Boolean::class.java).convention(true),
             isEnabled = true
         )
         storageService.use {
@@ -57,7 +62,7 @@ class FileStorageServiceTest {
     fun testStoreBlob_noPushSupport() {
         val storageService = FileSystemStorageService(
             bucketName = BUCKET_NAME,
-            isPush = false,
+            isPush = objectFactory.property(Boolean::class.java).convention(false),
             isEnabled = true
         )
         storageService.use {
@@ -72,7 +77,7 @@ class FileStorageServiceTest {
     fun testStoreBlob_disabled() {
         val storageService = FileSystemStorageService(
             bucketName = BUCKET_NAME,
-            isPush = true,
+            isPush = objectFactory.property(Boolean::class.java).convention(true),
             isEnabled = false
         )
         storageService.use {

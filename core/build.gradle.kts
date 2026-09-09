@@ -39,3 +39,9 @@ testing {
         }
     }
 }
+
+// b/250726951 Gradle ProjectBuilder needs reflection access to java.lang.
+val jvmAddOpensArgs = listOf("--add-opens=java.base/java.lang=ALL-UNNAMED")
+tasks.withType<Test>() {
+    this.jvmArgs(jvmAddOpensArgs)
+}

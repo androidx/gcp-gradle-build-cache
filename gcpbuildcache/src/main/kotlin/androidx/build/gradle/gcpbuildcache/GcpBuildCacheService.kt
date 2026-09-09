@@ -20,6 +20,7 @@ package androidx.build.gradle.gcpbuildcache
 import androidx.build.gradle.core.FileSystemStorageService
 import androidx.build.gradle.core.blobKey
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.Provider
 import org.gradle.caching.BuildCacheEntryReader
 import org.gradle.caching.BuildCacheEntryWriter
 import org.gradle.caching.BuildCacheKey
@@ -39,7 +40,7 @@ internal class GcpBuildCacheService(
     private val bucketName: String,
     gcpCredentials: GcpCredentials,
     messageOnAuthenticationFailure: String,
-    isPush: Boolean,
+    isPush: Provider<Boolean>,
     isEnabled: Boolean,
     inTestMode: Boolean = false
 ) : BuildCacheService {

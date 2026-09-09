@@ -32,7 +32,6 @@ class GcpBuildCacheServiceFactory : BuildCacheServiceFactory<GcpBuildCache> {
             .type("GCP-backed")
             .config("projectId", buildCache.projectId)
             .config("bucketName", buildCache.bucketName)
-            .config("isPushSupported", "${buildCache.isPush}")
             .config("isEnabled", "${buildCache.isEnabled}")
             .config(
                 "usingExportedKeyCredentials",
@@ -44,7 +43,7 @@ class GcpBuildCacheServiceFactory : BuildCacheServiceFactory<GcpBuildCache> {
             buildCache.bucketName,
             buildCache.credentials,
             buildCache.messageOnAuthenticationFailure,
-            buildCache.isPush,
+            buildCache.runtimePush.orElse(buildCache.isPush),
             buildCache.isEnabled
         )
         service.validateConfiguration()

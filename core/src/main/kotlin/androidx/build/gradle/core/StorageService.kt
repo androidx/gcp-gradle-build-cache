@@ -17,6 +17,8 @@
 
 package androidx.build.gradle.core
 
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import java.io.Closeable
 import java.io.InputStream
 
@@ -29,7 +31,7 @@ interface StorageService : Closeable {
     /**
      * `true` if the underlying storage service supports writes and deletes.
      */
-    val isPush: Boolean
+    val isPush: Provider<Boolean>
 
     /**
      * If `true`, use the underlying storage service.

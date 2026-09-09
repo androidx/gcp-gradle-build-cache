@@ -19,6 +19,8 @@ package androidx.build.gradle.s3buildcache
 
 import com.adobe.testing.s3mock.S3MockApplication
 import com.adobe.testing.s3mock.S3MockApplication.*
+import org.gradle.api.model.ObjectFactory
+import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -34,6 +36,8 @@ class S3StorageServiceTest {
 
     private lateinit var s3MockApplication: S3MockApplication
     private lateinit var client: S3Client
+    private val objectFactory: ObjectFactory = ProjectBuilder.builder().build().objects
+
 
     @Before
     fun setUp() {
@@ -63,7 +67,7 @@ class S3StorageServiceTest {
             region = REGION,
             bucketName = BUCKET_NAME,
             client = client,
-            isPush = true,
+            isPush = objectFactory.property(Boolean::class.java).convention(true),
             isEnabled = true,
             reducedRedundancy = true,
             sizeThreshold = SIZE_THRESHOLD
@@ -83,7 +87,7 @@ class S3StorageServiceTest {
             region = REGION,
             bucketName = BUCKET_NAME,
             client = client,
-            isPush = true,
+            isPush = objectFactory.property(Boolean::class.java).convention(true),
             isEnabled = true,
             reducedRedundancy = true,
             sizeThreshold = SIZE_THRESHOLD
@@ -106,7 +110,7 @@ class S3StorageServiceTest {
             region = REGION,
             bucketName = BUCKET_NAME,
             client = client,
-            isPush = false,
+            isPush = objectFactory.property(Boolean::class.java).convention(false),
             isEnabled = true,
             reducedRedundancy = true,
             sizeThreshold = SIZE_THRESHOLD
@@ -125,7 +129,7 @@ class S3StorageServiceTest {
             region = REGION,
             bucketName = BUCKET_NAME,
             client = client,
-            isPush = true,
+            isPush = objectFactory.property(Boolean::class.java).convention(true),
             isEnabled = true,
             reducedRedundancy = true,
             sizeThreshold = SIZE_THRESHOLD
@@ -134,7 +138,7 @@ class S3StorageServiceTest {
             region = REGION,
             bucketName = BUCKET_NAME,
             client = client,
-            isPush = false,
+            isPush = objectFactory.property(Boolean::class.java).convention(true),
             isEnabled = true,
             reducedRedundancy = true,
             sizeThreshold = SIZE_THRESHOLD
@@ -159,7 +163,7 @@ class S3StorageServiceTest {
             region = REGION,
             bucketName = BUCKET_NAME,
             client = client,
-            isPush = true,
+            isPush = objectFactory.property(Boolean::class.java).convention(true),
             isEnabled = false,
             reducedRedundancy = true,
             sizeThreshold = SIZE_THRESHOLD
