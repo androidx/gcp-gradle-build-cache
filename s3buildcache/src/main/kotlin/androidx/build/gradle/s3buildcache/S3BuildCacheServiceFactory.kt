@@ -37,10 +37,14 @@ class S3BuildCacheServiceFactory : BuildCacheServiceFactory<S3BuildCache> {
             .config("isPushSupported", "${buildCache.isPush}")
             .config("isEnabled", "${buildCache.isEnabled}")
             .config("credentialsType", "${buildCache.credentials}")
+            .config("forcePathStyle", "${buildCache.forcePathStyle}")
+            .apply { buildCache.endpoint?.let { config("endpoint", it) } }
 
         val service = S3BuildCacheService(
             region = buildCache.region,
             bucketName = buildCache.bucketName,
+            endpoint = buildCache.endpoint,
+            forcePathStyle = buildCache.forcePathStyle,
             isPush = buildCache.isPush,
             isEnabled = buildCache.isEnabled,
             reducedRedundancy = buildCache.reducedRedundancy,

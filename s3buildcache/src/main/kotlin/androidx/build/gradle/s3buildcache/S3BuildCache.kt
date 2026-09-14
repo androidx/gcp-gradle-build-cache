@@ -30,6 +30,16 @@ abstract class S3BuildCache : RemoteGradleBuildCache() {
     lateinit var region: String
 
     /**
+     * An optional endpoint override.
+     */
+    var endpoint: String? = null
+
+    /**
+     * Whether to force path-style URL ({endpoint}/{bucket}) instead of the virtual-hosted-style URL ({bucket}.{endpoint})
+     */
+    var forcePathStyle: Boolean = false
+
+    /**
      * Whether to use reduced redundancy.
      * When using S3 Express One Zone, set to false
      * @see <a href="https://aws.amazon.com/s3/reduced-redundancy/">Reduced Redundancy</a>
