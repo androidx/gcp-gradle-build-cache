@@ -27,6 +27,23 @@ import com.google.cloud.storage.*
 import org.gradle.api.GradleException
 import org.gradle.api.logging.Logging
 import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.Path
+
+internal fun downloadToTemporaryFile(createTempFile: () -> Path, download: (Path) -> Unit): Path {
+    val path = createTempFile()
+    try {
+        download(path)
+    } catch (failure: Throwable) {
+        try {
+            Files.deleteIfExists(path)
+        } catch (cleanupFailure: Throwable) {
+            failure.addSuppressed(cleanupFailure)
+        }
+        throw failure
+    }
+    return path
+}
 
 /**
  * An implementation of the [StorageService] that is backed by Google Cloud Storage.
@@ -127,8 +144,10 @@ internal class GcpStorageService(
                     // return empty entries as a cache miss
                     null
                 } else if (blob.size > sizeThreshold) {
-                    val path = FileHandleInputStream.create()
-                    blob.downloadTo(path)
+                    val path = downloadToTemporaryFile(
+                        createTempFile = { FileHandleInputStream.create() },
+                        download = { blob.downloadTo(it) }
+                    )
                     // Always return a buffered stream
                     path.handleInputStream()
                         .buffered(bufferSize = BUFFER_SIZE)
